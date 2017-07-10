@@ -128,9 +128,15 @@ public class DrawPanel extends JPanel {
             		   Color color = robot.getPixelColor((int)MouseInfo.getPointerInfo().getLocation().getX(),(int)MouseInfo.getPointerInfo().getLocation().getY());//new Color(img.getRGB(e.getPoint().x,e.getPoint().y));
             			
             		   switch(ColorPanelData.colorMode){
-            		     case 1: ColorPanelData.lineColor=color; break;
-            		     case 2: ColorPanelData.fillColor=color; break;
-            		     case 3: ColorPanelData.textColor=color; break;
+            		     case 1: ColorPanelData.lineColor=color; 
+            		     		 ColorPanel.lineColorPanel.setBackground(color);
+            		     		 break;
+            		     case 2: ColorPanelData.fillColor=color; 
+            		     		 ColorPanel.fillColorPanel.setBackground(color);
+            		     		 break;
+            		     case 3: ColorPanelData.textColor=color; 
+            		     		  ColorPanel.textColorPanel.setBackground(color);
+            		     		 break;
                        }
             		}
             		catch(AWTException ae) { ae.printStackTrace(); }
@@ -290,6 +296,7 @@ public class DrawPanel extends JPanel {
         
         shape_i=0; f=0; i=0;
         
+        System.out.println(ShapeOrder.size());
         for (shape_i=0; shape_i<ShapeOrder.size(); shape_i++) {
 
         	g2.setColor(ColorFillOrder.get(shape_i));

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry kind="src" path="img"/>
 	<classpathentry excluding="win_thread/" kind="src" path="src"/>
 	<classpathentry kind="lib" path="D:/project/diploma/lib/syntheticaPlain.jar"/>
 	<classpathentry kind="lib" path="D:/project/diploma/lib/syntheticaBlackStar.jar"/>

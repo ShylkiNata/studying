@@ -29,7 +29,7 @@ public class MainMenuElements extends CommonData{
        
        menuBar.add(Box.createHorizontalGlue());
        for(i=0; i<tls.length; i++) {
-           themeBtnImg = new ImageIcon(imgPath+tls[i]);
+           themeBtnImg = new ImageIcon(WindowGUI.class.getResource(imgPath+tls[i]));
            image = themeBtnImg.getImage();  
            nimage = image.getScaledInstance(25, 25, java.awt.Image.SCALE_SMOOTH);  
            themeBtnImg = new ImageIcon(nimage);
@@ -41,7 +41,7 @@ public class MainMenuElements extends CommonData{
        menuBar.add(Box.createHorizontalGlue());      
 
        for(i=0; i<2; i++) {
-				           themeBtnImg = new ImageIcon(imgPath+img[i]);
+				           themeBtnImg = new ImageIcon(WindowGUI.class.getResource(imgPath+img[i]));
 				           image = themeBtnImg.getImage();  
 				           nimage = image.getScaledInstance(15, 15, java.awt.Image.SCALE_SMOOTH);  
 				           themeBtnImg = new ImageIcon(nimage);

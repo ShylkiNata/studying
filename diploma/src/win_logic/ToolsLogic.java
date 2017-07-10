@@ -53,7 +53,7 @@ public class ToolsLogic extends MainMenuElements {
 		        public void actionPerformed(ActionEvent e) {
 		            if(panelCommonFlag==true) { panelCommon.setVisible(false); panelCommonFlag=false; 
 		            							ColorPanel.commonColorPanel.setVisible(false); 
-			            themeBtnImg = new ImageIcon(imgPath+"toolsClose.png");
+			            themeBtnImg = new ImageIcon(WindowGUI.class.getResource(imgPath+"toolsClose.png"));
 			            image = themeBtnImg.getImage();  
 			            nimage = image.getScaledInstance(25, 25, java.awt.Image.SCALE_SMOOTH);  
 			            themeBtnImg = new ImageIcon(nimage);
@@ -61,7 +61,7 @@ public class ToolsLogic extends MainMenuElements {
 		            }
 		            else { panelCommon.setVisible(true); panelCommonFlag=true;
 		            	   ColorPanel.commonColorPanel.setVisible(true); 
-			            themeBtnImg = new ImageIcon(imgPath+"tools.png");
+			            themeBtnImg = new ImageIcon(WindowGUI.class.getResource(imgPath+"tools.png"));
 			            image = themeBtnImg.getImage();  
 			            nimage = image.getScaledInstance(25, 25, java.awt.Image.SCALE_SMOOTH);  
 			            themeBtnImg = new ImageIcon(nimage);
@@ -90,9 +90,11 @@ public class ToolsLogic extends MainMenuElements {
 		        	createAlternateArray=0;
 		        	}
 		        	
-		            if(DrawPanel.ModeOrder.size()!=0) {
+		            if(DrawPanel.FigureOrder.size()>0) {
 		            	int index = DrawPanel.ModeOrder.size()-1;
-		            	if(DrawPanel.ModeOrder.get(index)<3) DrawPanel.ShapeOrder.remove(DrawPanel.ShapeOrder.size()-1);
+		            	//if(DrawPanel.ModeOrder.get(index)>3) 
+		            		DrawPanel.ShapeOrder.remove(DrawPanel.ShapeOrder.size()-1);
+		            	
 		            	DrawPanel.FigureOrder.remove(index);
 		            	DrawPanel.ModeOrder.remove(index);
 		            	DrawPanel.ColorOrder.remove(index);
@@ -109,7 +111,7 @@ public class ToolsLogic extends MainMenuElements {
 			            if(DrawPanel.ModeOrder.size()<ModeOrderTL.size()) {
 			            	
 			            	int  index = DrawPanel.ModeOrder.size();
-			            	if(ModeOrderTL.get(index)<3) DrawPanel.ShapeOrder.add(ShapeOrderTL.get(DrawPanel.ShapeOrder.size()));
+			            	DrawPanel.ShapeOrder.add(ShapeOrderTL.get(DrawPanel.ShapeOrder.size()));
 			            	DrawPanel.FigureOrder.add(FigureOrderTL.get(index));
 			            	DrawPanel.ModeOrder.add(ModeOrderTL.get(index));
 			            	DrawPanel.ColorOrder.add(ColorOrderTL.get(index));
@@ -187,7 +189,7 @@ public class ToolsLogic extends MainMenuElements {
 		        	else objColor=0;
 			        }
 			        });
-		  Btn[Btn.length-1].addActionListener(new ActionListener() { //выбрать интсрумент курсор
+		  Btn[Btn.length-1].addActionListener(new ActionListener() { //выбрать инструмент: курсор
 		        public void actionPerformed(ActionEvent e) {
 		        	drawModeCheck();
 		        	drawMode=-1;
@@ -200,7 +202,7 @@ public class ToolsLogic extends MainMenuElements {
 		        public void actionPerformed(ActionEvent e) {
 		        	drawModeCheck(); drawMode=10; 
 		        	
-		            themeBtnImg = new ImageIcon(imgPath+"f_linef.png");
+		            themeBtnImg = new ImageIcon(WindowGUI.class.getResource(imgPath+"f_linef.png"));
 		            image = themeBtnImg.getImage();  
 		            nimage = image.getScaledInstance(25, 25, java.awt.Image.SCALE_SMOOTH);  
 		            themeBtnImg = new ImageIcon(nimage);
@@ -211,7 +213,7 @@ public class ToolsLogic extends MainMenuElements {
 		        public void actionPerformed(ActionEvent e) { 
 		        	drawModeCheck(); drawMode=11; 
 		        	
-		            themeBtnImg = new ImageIcon(imgPath+"f_circlef.png");
+		            themeBtnImg = new ImageIcon(WindowGUI.class.getResource(imgPath+"f_circlef.png"));
 		            image = themeBtnImg.getImage();  
 		            nimage = image.getScaledInstance(25, 25, java.awt.Image.SCALE_SMOOTH);  
 		            themeBtnImg = new ImageIcon(nimage);
@@ -222,7 +224,7 @@ public class ToolsLogic extends MainMenuElements {
 		        public void actionPerformed(ActionEvent e) {
 		        	drawModeCheck(); drawMode=12; 
 		        	
-		            themeBtnImg = new ImageIcon(imgPath+"f_rectanglef.png");
+		            themeBtnImg = new ImageIcon(WindowGUI.class.getResource(imgPath+"f_rectanglef.png"));
 		            image = themeBtnImg.getImage();  
 		            nimage = image.getScaledInstance(25, 25, java.awt.Image.SCALE_SMOOTH);  
 		            themeBtnImg = new ImageIcon(nimage);
@@ -233,7 +235,7 @@ public class ToolsLogic extends MainMenuElements {
 		        public void actionPerformed(ActionEvent e) {
 		        	drawModeCheck(); drawMode=13; 
 		        	
-		            themeBtnImg = new ImageIcon(imgPath+"f_trianglef.png");
+		            themeBtnImg = new ImageIcon(WindowGUI.class.getResource(imgPath+"f_trianglef.png"));
 		            image = themeBtnImg.getImage();  
 		            nimage = image.getScaledInstance(25, 25, java.awt.Image.SCALE_SMOOTH);  
 		            themeBtnImg = new ImageIcon(nimage);
@@ -244,7 +246,7 @@ public class ToolsLogic extends MainMenuElements {
 		        public void actionPerformed(ActionEvent e) {
 		        	drawModeCheck(); drawMode=14; 
 		        	
-		            themeBtnImg = new ImageIcon(imgPath+"f_rhombusf.png");
+		            themeBtnImg = new ImageIcon(WindowGUI.class.getResource(imgPath+"f_rhombusf.png"));
 		            image = themeBtnImg.getImage();  
 		            nimage = image.getScaledInstance(25, 25, java.awt.Image.SCALE_SMOOTH);  
 		            themeBtnImg = new ImageIcon(nimage);
@@ -255,7 +257,7 @@ public class ToolsLogic extends MainMenuElements {
 		        public void actionPerformed(ActionEvent e) {
 		        	drawModeCheck(); drawMode=15; 
 		        	
-		            themeBtnImg = new ImageIcon(imgPath+"f_pentagonf.png");
+		            themeBtnImg = new ImageIcon(WindowGUI.class.getResource(imgPath+"f_pentagonf.png"));
 		            image = themeBtnImg.getImage();  
 		            nimage = image.getScaledInstance(25, 25, java.awt.Image.SCALE_SMOOTH);  
 		            themeBtnImg = new ImageIcon(nimage);
@@ -271,7 +273,7 @@ public class ToolsLogic extends MainMenuElements {
 	  
 	  void drawModeCheck(){
       	if(drawMode>3) {
-            themeBtnImg = new ImageIcon(imgPath+fgr[drawMode%10]);
+            themeBtnImg = new ImageIcon(WindowGUI.class.getResource(imgPath+fgr[drawMode%10]));
             image = themeBtnImg.getImage();  
             nimage = image.getScaledInstance(25, 25, java.awt.Image.SCALE_SMOOTH);  
             themeBtnImg = new ImageIcon(nimage);

@@ -28,30 +28,10 @@ public class ColorPanel {
 		fillColorPanel=new JPanel();
 		textColorPanel=new JPanel();
 				
-		ImageIcon themeBtnImg = new ImageIcon("/project/diploma/img/point.png");
-        Image image = themeBtnImg.getImage();  
-        Image nimage = image.getScaledInstance(22, 22, java.awt.Image.SCALE_SMOOTH);  
-        themeBtnImg = new ImageIcon(nimage);
-        lineColorBtn=new JButton(themeBtnImg);
-        lineColorBtn.setPreferredSize(new Dimension(20,20));
-        lineColorBtn.setBorderPainted(false);
-		
-		themeBtnImg = new ImageIcon("/project/diploma/img/shapeColor.png");
-        image = themeBtnImg.getImage();  
-        nimage = image.getScaledInstance(25, 25, java.awt.Image.SCALE_SMOOTH);  
-        themeBtnImg = new ImageIcon(nimage);
-        fillColorBtn=new JButton(themeBtnImg);
-        fillColorBtn.setPreferredSize(new Dimension(20,20));
-        fillColorBtn.setBorderPainted(false);
-        
-		themeBtnImg = new ImageIcon("/project/diploma/img/text.png");
-        image = themeBtnImg.getImage();  
-        nimage = image.getScaledInstance(25, 25, java.awt.Image.SCALE_SMOOTH);  
-        themeBtnImg = new ImageIcon(nimage);
-        textColorBtn=new JButton(themeBtnImg);
-        textColorBtn.setPreferredSize(new Dimension(20,20));
-        textColorBtn.setBorderPainted(false);
-        
+		lineColorBtn=addColorButton(lineColorBtn,"/point.png",22);
+		fillColorBtn=addColorButton(fillColorBtn,"/shapeColor.png",25);
+		textColorBtn=addColorButton(textColorBtn,"/text.png",25);
+      
         ColorPanelData.lineColor=Color.blue; ColorPanelData.fillColor=Color.white; ColorPanelData.textColor=Color.gray;
         
 		lineColorPanel.setBackground(ColorPanelData.lineColor);
@@ -68,14 +48,7 @@ public class ColorPanel {
 		commonColorPanel.add(fillColorPanel);
 		commonColorPanel.add(textColorBtn); 
 		commonColorPanel.add(textColorPanel); 
-		
-		lineColorBtn.addActionListener(new ActionListener() {           
-			public void actionPerformed(ActionEvent e) {
-				 ColorPanelData.lineColor = JColorChooser.showDialog(null, "JColorChooser", ColorPanelData.lineColor);
-	             lineColorPanel.setBackground(ColorPanelData.lineColor);
-				 }           
-	       		});
-		
+				
 		lineColorPanel.addMouseListener(new MouseAdapter() {           
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -86,7 +59,6 @@ public class ColorPanel {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				ColorPanelData.colorMode=2;
-				System.out.println("2");
 				}         
 	    });
 		textColorPanel.addMouseListener(new MouseAdapter() {           
@@ -95,6 +67,14 @@ public class ColorPanel {
 				ColorPanelData.colorMode=3;
 				}         
 	    });
+
+		
+		lineColorBtn.addActionListener(new ActionListener() {           
+			public void actionPerformed(ActionEvent e) {
+				ColorPanelData.lineColor = JColorChooser.showDialog(null, "JColorChooser", ColorPanelData.lineColor);
+	             lineColorPanel.setBackground(ColorPanelData.lineColor);
+	             }           
+	       		});
 		
 		fillColorBtn.addActionListener(new ActionListener() {           
 			public void actionPerformed(ActionEvent e) {
@@ -111,5 +91,19 @@ public class ColorPanel {
 	       		});
 		
 		return commonColorPanel;
+	}
+	
+	private JButton addColorButton(JButton button, String url, int size){
+		ImageIcon themeBtnImg = new ImageIcon(WindowGUI.class.getResource(url));
+        Image image = themeBtnImg.getImage();  
+        
+        Image nimage = image.getScaledInstance(size, size, java.awt.Image.SCALE_SMOOTH);  
+        themeBtnImg = new ImageIcon(nimage);
+        
+        button=new JButton(themeBtnImg);
+        button.setPreferredSize(new Dimension(20,20));
+        button.setBorderPainted(false);	
+        
+        return button; 
 	}
 }

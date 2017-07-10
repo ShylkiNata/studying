@@ -38,7 +38,7 @@ public class ToolsElements extends CommonData{
 	 	   
 		   //Заполнение кнопками рисования первой (левой) панели в Tools 	   
 	       for(i=2; i<Btn.length-3; i++) {
-	           themeBtnImg = new ImageIcon(imgPath+img[i]);
+	           themeBtnImg = new ImageIcon(WindowGUI.class.getResource(imgPath+img[i]));
 	           image = themeBtnImg.getImage();  
 	           nimage = image.getScaledInstance(25, 25, java.awt.Image.SCALE_SMOOTH);  
 	           themeBtnImg = new ImageIcon(nimage);
@@ -49,7 +49,7 @@ public class ToolsElements extends CommonData{
 	 	         
 		   //Заполнение кнопками рисования второй (центральной) панели в Tools 	      
 		   for(i=0; i<inBtn.length; i++) {
-		       themeBtnImg = new ImageIcon(imgPath+fgr[i]);
+		       themeBtnImg = new ImageIcon(WindowGUI.class.getResource(imgPath+fgr[i]));
 		       image = themeBtnImg.getImage();  
 		       nimage = image.getScaledInstance(25, 25, java.awt.Image.SCALE_SMOOTH);  
 		       themeBtnImg = new ImageIcon(nimage);
@@ -59,7 +59,7 @@ public class ToolsElements extends CommonData{
 		   }      
 		    
 		     for(i=Btn.length-3; i<Btn.length; i++) {
-			       themeBtnImg = new ImageIcon(imgPath+img[i]);
+			       themeBtnImg = new ImageIcon(WindowGUI.class.getResource(imgPath+img[i]));
 			       image = themeBtnImg.getImage();  
 			       nimage = image.getScaledInstance(25, 25, java.awt.Image.SCALE_SMOOTH);  
 			       themeBtnImg = new ImageIcon(nimage);

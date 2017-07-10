@@ -11,7 +11,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 public class CommonData {
-	public String imgPath="/project/diploma/img/";
+	public String imgPath="/";
 	public static String [] img={"connect.png","about.png","pencil.png","brush.png","eraser.png","diameter.png","picker.png","cursor.png"};
 	public static String [] fgr={"f_line.png","f_circle.png","f_rectangle.png","f_triangle.png","f_rhombus.png","f_pentagon.png"};
 	public static String [] tls={"back.png","tools.png","forth.png"};

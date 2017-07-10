@@ -6,6 +6,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.net.URL;
+
 import javax.swing.*;
 
 import de.javasoft.plaf.synthetica.SyntheticaBlackStarLookAndFeel;
@@ -29,9 +31,11 @@ public class WindowGUI {
    
 /*********************************************** ŒÕ—“–” “Œ–***********************************************/      
 	public WindowGUI() {
+	  URL url = WindowGUI.class.getResource("/icon.png");
+	  
 	  frame = new JFrame(frameName+" | "+fileName); 
 	  frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	  frame.setIconImage(new ImageIcon("/project/diploma/img/icon.png").getImage());
+	  frame.setIconImage(new ImageIcon(url).getImage());
 	    
 	  frame.setJMenuBar(new MainMenuLogic().createMenu());  
 

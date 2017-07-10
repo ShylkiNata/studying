@@ -178,13 +178,12 @@ public class MainMenuLogic extends MainMenuElements {
 			           tClient = new Thread(rClient);
 			           tClient.start();
 		            }
-		            else if (result == 1) {
+		            else if (result == 1 && yField.getText()!="") {
 			           			           
 			           rServer = new ServerLogic(Integer.parseInt(yField.getText()));
 			           tServer = new Thread(rServer);
 			           tServer.start();
-			          
-			               
+
 			           System.out.println("y value: " + yField.getText());
 			          }
 		            }
@@ -337,7 +336,7 @@ public class MainMenuLogic extends MainMenuElements {
     	    			{
     	    			  ois = new ObjectInputStream(new FileInputStream(selectedOpenFile.getAbsolutePath()));
     	    			    	    			  
-    	    			  DrawPanel.FigureOrder =/* (ArrayList<Point[]>)*/ ((ArrayList<Point[]>)  ois.readObject());
+    	    			  DrawPanel.FigureOrder = (ArrayList<Point[]>)  ois.readObject();
     	    			  DrawPanel.ModeOrder = (ArrayList<Integer>) ois.readObject();
     	    			  DrawPanel.ColorOrder = (ArrayList<Color>) ois.readObject();
     	    			  DrawPanel.WidthOrder = (ArrayList<Float>) ois.readObject();
