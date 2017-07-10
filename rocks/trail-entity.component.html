@@ -1,0 +1,40 @@
+<div *ngIf="tds.error['flag']" class="alert alert-info alert-dismissable">
+  <a class="close" data-dismiss="alert" aria-label="close" (click)="closeAlert()">×</a>
+  <strong>Error!</strong> {{tds.error['body']}}
+</div>
+
+<div class="trailEntity">
+	<ul>
+		<li class="tabItem" *ngFor="let item of tabs">
+		    <div [style.border-bottom]="item.color" (click)="changeTab(item.number)">{{item.name}}</div>
+		    <p class="separator"></p>
+		</li>
+	</ul>
+
+	<div class="trailBody">
+		<mainInfo *ngIf="tabs[0]['visibility']"></mainInfo>
+		<photos *ngIf="tabs[2]['visibility']"></photos>
+		<description *ngIf="tabs[3]['visibility']"></description>
+	</div>
+</div>
+
+<div class="trailEntityNav">
+	<div>
+		<a class="back">
+			<p (click)="changeTab(previousTab-1)" *ngIf="backState">
+				<i class="glyphicon glyphicon-chevron-left"></i>
+				{{back}}
+			</p>
+			<div *ngIf="!backState"></div>
+		</a>
+		<a class="center">Publish</a>
+		<a class="next">
+			<p (click)="changeTab(previousTab+1)" *ngIf="nextState">
+				{{next}}
+				<i class="glyphicon glyphicon-chevron-right"></i>
+			</p>
+			<div *ngIf="!nextState"></div>
+		</a>		
+
+	</div>
+<div>

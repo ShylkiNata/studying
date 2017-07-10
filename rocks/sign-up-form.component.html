@@ -1,0 +1,30 @@
+<form>
+
+  <div class="form-group">
+    <label for="email">What's your email address?</label>
+    <div class="input-group">
+      <span class="input-group-addon" id="basic-addon1" [style.color]="emailColor">@</span>
+      <input [(ngModel)]="data['email']" (ngModelChange)="sendRegData($event, 'email')" name="email" type="text" required>
+    </div>
+    <p> {{error['email']}} </p>
+  </div>
+ 
+  <div class="form-group pass-origin">
+    <label for="password">Choose a password</label>
+    <div class="input-group">
+      <span class="input-group-addon"><i class="glyphicon glyphicon-lock" [style.color]="passwordColor"></i></span>
+      <input [(ngModel)]="data['password']" (ngModelChange)="sendRegData($event, 'password')" name="password" type="text" required>
+    </div>
+    <p> {{error['password']}} </p>
+  </div>
+
+  <div class="form-group pass-re">
+    <label for="password-re">Re-type password</label>
+    <div class="input-group">
+      <span class="input-group-addon"><i class="glyphicon glyphicon-lock" [style.color]="retypeColor"></i></span>
+      <input [(ngModel)]="data['retype']" (ngModelChange)="sendRegData($event, 'retype')" name="retype" type="text" required>
+    </div>
+    <p> {{error['retype']}} </p>
+  </div>
+
+</form>

@@ -1,0 +1,90 @@
+[{ 
+   "key": "Complexity",
+   "value": [{
+                  "number": 1,
+                  "value": "EASY",
+                  "path":"",
+                  "state": true,
+                  "color": "#20822d"      
+                 },
+                 {
+                  "number": 2,
+                  "value": "MEDIUM",
+                  "path":"",
+                  "state": false,
+                  "color": ""      
+                 },
+                 {
+                  "number": 3,
+                  "value": "HARD",
+                  "path":"",
+                  "state": false,
+                  "color": ""     
+                 }
+               ]
+ }, { 
+   "key": "Trail type",
+   "value":  [{
+                  "number": 1,
+                  "value": "Loop",
+                  "path":"./css/img/icons/white/loop.png",
+                  "state": false,
+                  "color": ""     
+                 },
+                 {
+                  "number": 2,
+                  "value": "Point-to-Point",
+                  "path":"./css/img/icons/white/point-to-point.png",
+                  "state": true,
+                  "color": "#20822d"      
+                 },
+                 {
+                  "number": 3,
+                  "value": "In and Out",
+                  "path":"./css/img/icons/white/in-and-out.png",
+                  "state": false,
+                  "color": ""     
+                 }
+               ]
+ }, { 
+   "key": "Duration",
+   "value":  [{
+                  "number": 1,
+                  "value": "ONE DAY",
+                  "path":"",
+                  "state": false,
+                  "color": ""      
+                 },
+                 {
+                  "number": 2,
+                  "value": "WEEKEND",
+                  "path":"",
+                  "state": false,
+                  "color": ""      
+                 },
+                 {
+                  "number": 3,
+                  "value": "SEVERAL DAYS",
+                  "path":"",
+                  "state": true,
+                  "color": "#20822d"     
+                 }
+               ]
+ }, { 
+   "key": "Additional activities",
+   "value":  [{
+                  "number": 1,
+                  "value": "Good for kids",
+                  "path":"./css/img/icons/white/good-for-kids.png",
+                  "state": false,
+                  "color": ""      
+                 },
+                 {
+                  "number": 2,
+                  "value": "Dog allowed",
+                  "path":"./css/img/icons/white/dog-friendly.png",
+                  "state": false,
+                  "color": ""      
+                 }
+               ]
+ }]

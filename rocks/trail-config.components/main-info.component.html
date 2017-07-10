@@ -1,0 +1,28 @@
+<div class="trailMain">
+	<div class="trailName">
+		<label>Trail name</label>
+		<input [(ngModel)]="tds.trailEntity.name" [ngModelOptions]="{standalone: true}" type="text" placeholder="Type here trail name">
+	</div>
+
+	<div class="trailWhy">
+		<label>Why go?</label>
+		<textarea [(ngModel)]="tds.trailEntity.whyGo" placeholder="{{whyGo}}"></textarea>
+	</div>
+
+	<div class="trailSeason">
+		<label>Season</label>
+	</div>
+
+	<div class="trailParams">
+		<ul *ngFor="let i of tds.mainOptions" class="trailParams">
+			<p>{{i.key}}</p>
+			<p> <li *ngFor="let j of i.value" (click)="activateOption(i.key,j.number)" [style.background-color]="j.color">
+					<figure>
+						<img [src]="j.path">
+						<figcaption>{{j.value}}</figcaption>
+					</figure>
+				</li>
+			</p>
+		</ul>
+	</div>
+</div>

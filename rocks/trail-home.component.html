@@ -1,0 +1,13 @@
+<div class="route">
+
+	<p>Find your route</p>
+	<input type="text" class="form-control" [(ngModel)]="location" (ngModelChange)="searchLocation($event)" placeholder="Enter location">
+	<i class="glyphicon glyphicon-search"></i>
+
+	<ul *ngIf="showFound" class="routeResults">
+  		<li *ngFor="let item of foundRoutes">
+		    {{item.name}}
+		</li>
+	</ul>
+
+</div>

@@ -1,0 +1,49 @@
+[{ 
+   "name": "Change home background",
+   "ref": "/"
+ }, { 
+   "name": "Manage geography",
+   "ref": "/"
+ }, { 
+   "name": "National parks",
+   "ref": "/"
+ }, { 
+   "name": "Reviews to moderate",
+   "ref": "/"
+ }, { 
+   "name": "Change home background",
+   "ref": "/"
+ }, { 
+   "name": "My activities",
+   "ref": "/"
+ }, { 
+   "name": "User management",
+   "ref": "/userlist"
+ }, { 
+   "name": "Feedbacks",
+   "ref": "/"
+ }, { 
+   "name": "Banners",
+   "ref": "/"
+ }, { 
+   "name": "Activities to moderate",
+   "ref": "/"
+ }, { 
+   "name": "Activity languages",
+   "ref": "/"
+ }, { 
+   "name": "Site translations",
+   "ref": "/"
+ }, { 
+   "name": "OSM Import Page",
+   "ref": "/"
+ }, { 
+   "name": "OSM Config Page",
+   "ref": "/"
+ }, { 
+   "name": "Symbols configuration",
+   "ref": "/"
+ }, { 
+   "name": "Imported trails",
+   "ref": "/"
+ }]

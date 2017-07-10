@@ -1,0 +1,50 @@
+<div class="shadow" *ngIf="shadowIsHidden" (click)="closeSignForm()"></div>
+
+<div class="signForm" *ngIf="shadowIsHidden">
+		<div class="signHeader">
+		<div class="title">OUTDOOR.ROCKS!</div>
+		<div class="state" [style.background-color]="colorUpbg" [style.color]="colorUp" (click)="changeState(1);">Sign up</div>
+		<div class="state" [style.background-color]="colorInbg" [style.color]="colorIn" (click)="changeState(2);">Sign in</div>
+	</div>
+
+	<div class="signBody">
+		<sign-in-form *ngIf="signInType" (userData)="handleData($event)"></sign-in-form>
+		<sign-up-form *ngIf="signUpType" (userRegData)="handleRegData($event)"></sign-up-form>
+
+		<div class="signButtons">
+			<div class="sign-button" (click)="checkUserData()">{{signButton}}</div>
+			<div (click)="closeSignForm()">Cancel</div>
+		</div>
+	</div>
+</div>
+			   
+<div class="headerBg">
+   <div class="sky-bar">
+	   	<a href="">OUTDOOR.ROCKS!</a>
+	   	<div *ngIf="authorized" class="authFunctions" (click)="showMenuList()"></div>
+					 	
+	 	<ul *ngIf="showMenu" class="menu">
+  			<li *ngFor="let item of menuItems">
+			    <a routerLink='{{item.ref}}'>{{item.name}}</a>
+			</li>
+		</ul>
+
+	   	<a href="#" class="sign" *ngIf="!authorized" (click)="openSignForm(1)">{{sign}}</a>
+
+		<div *ngIf="authorized" class="account">
+			<img src="{{User['avatar']}}" class="avatar"/> 
+				{{User['role']}} {{User['email']}} 
+			<div class="logOut" (click)="logOut()"></div>
+			</div>
+	</div>
+
+	<trailHome></trailHome>
+</div>
+
+<geobject></geobject>
+<div class="banner"></div>
+
+<div *ngIf="Error['flag']" class="alert alert-danger alert-dismissable">
+  <a class="close" data-dismiss="alert" aria-label="close" (click)="closeAlert()">×</a>
+  <strong>Error!</strong> {{Error['body']}}
+</div>

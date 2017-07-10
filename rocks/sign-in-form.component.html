@@ -1,0 +1,21 @@
+<form>
+
+  <div class="form-group">
+    <label for="email">Your email address</label>
+    <div class="input-group">
+      <span class="input-group-addon" id="basic-addon1" [style.color]="emailColor">@</span>
+      <input [(ngModel)]="data['email']" (ngModelChange)="sendData($event,'email')" type="text" name='email' required>
+    </div>
+    <p> {{error['email']}} </p>
+  </div>
+ 
+  <div class="form-group">
+    <label for="password">Your password</label>
+    <div class="input-group">
+      <span class="input-group-addon"><i class="glyphicon glyphicon-lock" [style.color]="passwordColor"></i></span>
+      <input [(ngModel)]="data['password']" (ngModelChange)="sendData($event,'password')" type="text" name='password' required>
+    </div>
+    <p> {{error['password']}} </p>
+  </div>
+
+</form>

@@ -1,0 +1,77 @@
+<div class="shadow" *ngIf="shadowIsHidden" (click)="closeSignForm()"></div>
+
+<form class="userForm" *ngIf="shadowIsHidden">
+   	 <div class="userFormHeader">
+   	 	<p>{{formHeader}}</p>
+   	 </div>
+
+   	 <div class="userFormBody">
+
+   	 	<div class="container">
+			<file-uploader [activeColor]="'orangered'" [baseColor]="'lightgray'"></file-uploader> 	
+	   	 </div>
+   	 
+		 <div class="form-group email">
+		    <label>User address</label>
+		    <input id="newUser['email']" [(ngModel)]="newUser[+'email']" [ngModelOptions]="{standalone: true}" type="text" required>
+		</div>
+
+		<div class="form-group roleSelector">
+		    <label>Role</label>
+		    <select class="selectpicker" id="newUser['role']" [(ngModel)]="newUser['role']" [ngModelOptions]="{standalone: true}" [disabled]="User['role']!='admin'">
+			  	<option *ngFor="let role of roleStructure" [ngValue]="role">{{role}}</option>
+			</select>
+		</div> 
+		 
+		 <div class="form-group pass-origin"> 
+		    <label>Enter password</label>
+		    <input id="newUser['password']" [(ngModel)]="newUser['password']" [ngModelOptions]="{standalone: true}" type="text" class="password" required>
+		 </div>
+
+		 <div class="form-group pass-re">
+		    <label>Re-type password</label>
+		    <input id="newUser['repassword']" [(ngModel)]="newUser['repassword']" [ngModelOptions]="{standalone: true}" type="text" class="password" required>
+		 </div>
+
+		<div class="userFormButtons">
+			<div class="userForm-button" (click)="addNewUser()">{{formOption}}</div>
+			<div (click)="closeSignForm()">Cancel</div>
+	    </div>
+	 </div>
+
+</form>
+
+<div class="green-bar">
+	<div class="shift">
+		<img src="{{User['avatar']}}" class="avatar"/> 
+			{{User['role']}} {{User['email']}} 
+		<div class="logOut" (click)="logOut()"></div>
+  	</div>
+
+  	<div class="adduser" *ngIf="User['role']=='admin'" (click)="showAddUserForm($event, 'Add')"></div>
+</div>
+
+<table class="table table-hover userList">
+    <thead>
+        <tr>
+		    <th>User</th>
+		    <th>User role</th>
+		    <th>Edit</th>
+		    <th>Delete</th>
+        </tr>
+    </thead>
+
+    <tbody>
+	    <tr *ngFor="let item of userList">
+	    	<td><img src="{{item.avatar}}" class="avatar"/> {{item.email}} </td>
+	    	<td>{{item.role}}</td>
+	    	<td><a id="{{item.email}}" (click)="showAddUserForm($event, 'Edit')">Edit</a></td>
+	    	<td><a id="{{item.email}}" (click)="deleteUser($event)">Delete</a></td>
+		</tr>
+    </tbody>
+</table>
+
+<div *ngIf="Error['flag']" class="alert alert-danger alert-dismissable">
+  <a class="close" data-dismiss="alert" aria-label="close" (click)="closeAlert()">×</a>
+  <strong>Error!</strong> {{Error['body']}}
+</div>

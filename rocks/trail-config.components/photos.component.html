@@ -1,0 +1,15 @@
+<div class="trailPhotos">
+	<div>
+		Cover photo
+		<trail-photo-uploader [calledBy]="'cover'" [imgSource]="tds.coverPhoto" [hideLoadButton]="tds.hideCoverLoadButton" data-toggle="tooltip" data-placement="right" title="Click to change image"></trail-photo-uploader>
+	</div>
+	<div>
+		Trail Photos
+		<ul>
+			<li *ngFor="let item of tds.trailPhotos">
+			    <img [src]="item.image" (click)="deleteImage(item.index)" data-toggle="tooltip" data-placement="right" title="Click to delete image"><div class="filler"></div>
+			</li>
+			<trail-photo-uploader class="trailFormat" [calledBy]="'trail'" [imgSource]="tds.trailPhotos" [hideLoadButton]="true"></trail-photo-uploader>
+		</ul>
+	</div>
+</div>

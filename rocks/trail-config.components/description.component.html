@@ -1,0 +1,24 @@
+<div class="trailDescription">
+	<div class="trailWhy">
+		<label>Detailed description</label>
+		<textarea [(ngModel)]="tds.trailEntity.description" placeholder="Please share with us all the details of the trail"></textarea>
+	</div>
+
+	<div class="references">
+		<label>References</label>
+		<ul>
+			<li *ngFor="let i of tds.trailReferences">
+				<a target="_blank" href="{{i.path}}">{{i.name}}</a> <i class="glyphicon glyphicon-remove" (click)="deleteReference(i.index)"></i>
+			</li>
+		</ul>
+		<div class="refInputs">
+			<span>https://</span>
+			<input id="url" [(ngModel)]="url" [ngModelOptions]="{standalone: true}" type="text" placeholder="Link URL">
+			<div></div>
+			<input id="title" [(ngModel)]="title" [ngModelOptions]="{standalone: true}" type="text" placeholder="Link Title">
+			<div></div>
+			<a (click)="addReference()">Add</a>
+		</div>
+	</div>
+
+</div>
