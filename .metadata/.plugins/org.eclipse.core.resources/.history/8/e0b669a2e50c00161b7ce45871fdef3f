@@ -1,0 +1,103 @@
+package win_logic;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JColorChooser;
+import javax.swing.JPanel;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
+
+public class ColorPanel {
+	JPanel lineColorPanel, fillColorPanel, commonColorPanel, textColorPanel;
+	JButton lineColorBtn, fillColorBtn, textColorBtn;
+	public static Color lineColor, fillColor, textColor;
+			
+	public JPanel CreateColorPanel(){
+		commonColorPanel=new JPanel();
+		commonColorPanel.setBackground(new Color(51,51,51));
+		
+		lineColorPanel=new JPanel();
+		fillColorPanel=new JPanel();
+		textColorPanel=new JPanel();
+				
+		ImageIcon themeBtnImg = new ImageIcon("/project/diploma/img/point.png");
+        Image image = themeBtnImg.getImage();  
+        Image nimage = image.getScaledInstance(25, 25, java.awt.Image.SCALE_SMOOTH);  
+        themeBtnImg = new ImageIcon(nimage);
+        lineColorBtn=new JButton(themeBtnImg);
+        lineColorBtn.setPreferredSize(new Dimension(20,20));
+		
+		themeBtnImg = new ImageIcon("/project/diploma/img/shapeColor.png");
+        image = themeBtnImg.getImage();  
+        nimage = image.getScaledInstance(25, 25, java.awt.Image.SCALE_SMOOTH);  
+        themeBtnImg = new ImageIcon(nimage);
+        fillColorBtn=new JButton(themeBtnImg);
+        fillColorBtn.setPreferredSize(new Dimension(20,20));
+        
+		themeBtnImg = new ImageIcon("/project/diploma/img/text.png");
+        image = themeBtnImg.getImage();  
+        nimage = image.getScaledInstance(25, 25, java.awt.Image.SCALE_SMOOTH);  
+        themeBtnImg = new ImageIcon(nimage);
+        textColorBtn=new JButton(themeBtnImg);
+        textColorBtn.setPreferredSize(new Dimension(20,20));
+        
+        lineColor=Color.blue; fillColor=Color.yellow; textColor=Color.black;
+        
+		lineColorPanel.setBackground(lineColor);
+		lineColorPanel.add(lineColorBtn);
+		fillColorPanel.setBackground(fillColor);
+		fillColorPanel.add(fillColorBtn);
+		textColorPanel.setBackground(textColor);
+		textColorPanel.add(textColorBtn);
+ 
+		commonColorPanel.add(lineColorPanel);  	
+		commonColorPanel.add(fillColorPanel);  
+		commonColorPanel.add(textColorPanel); 
+		
+		lineColorBtn.addActionListener(new ActionListener() {           
+			public void actionPerformed(ActionEvent e) {
+	             lineColor = JColorChooser.showDialog(null, "JColorChooser", lineColor);
+	             lineColorPanel.setBackground(lineColor);
+				 }           
+	       		});
+		
+		fillColorBtn.addActionListener(new ActionListener() {           
+			public void actionPerformed(ActionEvent e) {
+	             fillColor = JColorChooser.showDialog(null, "JColorChooser", fillColor);
+	             fillColorPanel.setBackground(fillColor);
+	             }           
+	       		});
+		
+		textColorBtn.addActionListener(new ActionListener() {           
+			public void actionPerformed(ActionEvent e) {
+	             textColor = JColorChooser.showDialog(null, "JColorChooser", textColor);
+	             textColorPanel.setBackground(textColor);
+	             }           
+	       		});
+		
+		return commonColorPanel;
+	}
+	
+	public Color get_lineColor(){
+		return lineColor;
+	}
+	
+	public Color get_fillColor(){
+		return fillColor;
+	}
+	
+	public Color get_textColor(){
+		return textColor;
+	}
+}

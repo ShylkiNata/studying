@@ -1,0 +1,144 @@
+package win_logic;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Point;
+import java.awt.Polygon;
+import java.awt.Shape;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
+import java.awt.geom.Path2D;
+import java.awt.geom.Rectangle2D;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
+
+import win_model.*;
+
+public class ClientLogic implements Runnable {
+	String ip; int port;
+	static ObjectOutputStream outC; static ObjectInputStream inC;
+	
+	private Path2D path_client;
+	private Line2D line_client;
+	private Rectangle2D rect_client;
+	private Ellipse2D elli_client;
+	private Polygon poly_client;
+	
+	public ClientLogic(String ip, int port){
+		this.ip=ip;
+		this.port=port;
+	}
+
+	@SuppressWarnings({ "unchecked", "resource" })
+	@Override
+	public void run() {
+		
+        try {
+            InetAddress ipA = InetAddress.getByName(ip); // создаем объект который отображает вышеописанный IP-адрес.
+            System.out.println("Any of you heard of a socket with IP address " + ip + " and port " + port + "?");
+            Socket socket = new Socket(ipA, port); // создаем сокет используя IP-адрес и порт сервера.
+            System.out.println("Yes! I just got hold of the program.");
+            
+            ServerData.GotAClientFLAG=1;
+
+	         outC = new ObjectOutputStream(socket.getOutputStream());
+	         inC = new ObjectInputStream(socket.getInputStream());
+
+        	 DrawPanel.clearArea();
+
+        	 DrawPanel.ModeOrder= (ArrayList<Integer>) inC.readObject(); 
+        	 DrawPanel.FigureOrder=(ArrayList<Point[]>) inC.readObject(); 
+        	 DrawPanel.ColorOrder=(ArrayList<Color>) inC.readObject(); 
+        	 DrawPanel.WidthOrder=(ArrayList<Float>) inC.readObject(); 
+        	 DrawPanel.ColorFillOrder=(ArrayList<Color>) inC.readObject(); 
+        	 DrawPanel.ShapeOrder=(ArrayList<Shape>) inC.readObject(); 
+        	 DrawPanel.StringOrder=(ArrayList<String>) inC.readObject(); 
+        	 DrawPanel.FontOrder=(ArrayList<Font>) inC.readObject();   	 
+        	 
+        	 DrawPanel.jp.repaint();
+        	 
+	         while(true){
+	        	 getDataFromServer();
+	         }        	 
+	            
+              
+        } catch (Exception x) {
+            x.printStackTrace();
+        }	
+	}
+	
+	void getDataFromServer(){
+        try {  DrawPanel.mode_client=(int)inC.readObject();
+ 	   		   DrawPanel.startPoint_client=(Point) ClientLogic.inC.readObject();
+        	   DrawPanel.width_client=(float)inC.readObject();	
+        	   DrawPanel.color_client=(Color)inC.readObject();	
+        	   DrawPanel.fillColor_client=(Color)inC.readObject();	
+ 	   		   
+        	   if(DrawPanel.mode_client<3 && DrawPanel.mode_client>=0) { 
+        		   path_client = new Path2D.Double(); DrawPanel.shape_client = path_client; }
+        	           	           	   
+        	   if((int)inC.readObject()==-1000) getDataFromServerRealesed(); // проверить, точка поставлена или линию проводят	
+        	   else getDataFromServerDragged(); //для кривых линий 
+			} 
+        catch (ClassNotFoundException e1) { e1.printStackTrace();	} 
+        catch (IOException e1) { e1.printStackTrace(); }
+        
+          
+	}
+	
+	void getDataFromServerDragged(){
+		try{
+			DrawPanel.endPoint_client=(Point) ClientLogic.inC.readObject(); // получить конечную точку
+		    
+			if(DrawPanel.mode_client<3 && DrawPanel.mode_client>=0) {
+	              path_client.moveTo(DrawPanel.startPoint_client.x, DrawPanel.startPoint_client.y);
+	              path_client.lineTo(DrawPanel.endPoint_client.x, DrawPanel.endPoint_client.y);
+	              DrawPanel.shape_client = path_client;
+	              DrawPanel.startPoint_client=DrawPanel.endPoint_client;
+	              
+			}
+			else DrawPanel.endPoint_client=(Point) ClientLogic.inC.readObject();
+	              
+				  DrawPanel.jp.repaint();
+	              
+	              if((int)ClientLogic.inC.readObject()==1000) getDataFromServerDragged();
+	              else getDataFromServerRealesed();
+		 	   	
+		    }
+		 catch (ClassNotFoundException e1) { e1.printStackTrace();	} 
+		 catch (IOException e1) { e1.printStackTrace(); }
+	}
+	void getDataFromServerRealesed(){
+		try{
+			  if(DrawPanel.mode_client<3 && DrawPanel.mode_client>=0) {
+				 	  DrawPanel.endPoint_client=(Point) ClientLogic.inC.readObject();
+		              path_client.moveTo(DrawPanel.startPoint_client.x, DrawPanel.startPoint_client.y);
+		              path_client.lineTo(DrawPanel.endPoint_client.x, DrawPanel.endPoint_client.y);
+		              DrawPanel.shape_client = path_client;
+		              
+		              DrawPanel.FigureOrder.add(new Point[]{DrawPanel.startPoint_client,DrawPanel.endPoint_client}); 
+		              
+		              DrawPanel.startPoint_client=DrawPanel.endPoint_client=null;
+		              
+					  if(DrawPanel.mode_client==0) DrawPanel.WidthOrder.add((float) 1);
+					  else DrawPanel.WidthOrder.add(DrawPanel.width_client);
+					  if(DrawPanel.mode_client==2) DrawPanel.ColorOrder.add(Color.white);
+					  else DrawPanel.ColorOrder.add(DrawPanel.color_client);
+						
+					  DrawPanel.ShapeOrder.add(DrawPanel.shape_client);	
+					  DrawPanel.ModeOrder.add(DrawPanel.mode_client);               
+					  DrawPanel.ColorFillOrder.add(DrawPanel.fillColor_client); // цвета закрашенного
+					  
+		              DrawPanel.jp.repaint();
+
+			  }
+		}
+			 catch (ClassNotFoundException e1) { e1.printStackTrace();	} 
+			 catch (IOException e1) { e1.printStackTrace(); }
+	}
+}

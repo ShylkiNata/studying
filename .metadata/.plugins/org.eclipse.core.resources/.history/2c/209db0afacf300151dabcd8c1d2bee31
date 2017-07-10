@@ -1,0 +1,153 @@
+package win_style;
+
+import java.awt.BasicStroke;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.geom.Line2D;
+
+import javax.swing.*;
+
+import de.javasoft.plaf.synthetica.SyntheticaBlackStarLookAndFeel;
+
+public class WindowCreation {
+   static String frameName="Jade", imgPath="/project/diploma/img/";
+   static String [] img={"theme.png","connect.png","pencil.png","eraser.png","picker.png","fill.png"};
+   static String [] fgr={"f_line.png","f_circle.png","f_rectangle.png","f_triangle.png"};
+   
+   static String [] Menu = {"File", "Tools", "Image"};
+   static String [] MenuFileItem = {"New", "Open", "Save", "Save As", "Close"};
+   
+   static JMenu [] jMenu = new JMenu [Menu.length];
+   static JMenuItem  [] jMenuItem = new JMenuItem [MenuFileItem.length];
+   
+   static ImageIcon themeBtnImg;
+   static Image image, nimage;
+   static JButton [] Btn = new JButton[img.length];
+   static JButton [] inBtn = new JButton[fgr.length];
+   
+   static int i, j;
+   static Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+   
+/* Создаём панель меню с основными пунктами */
+   public static JMenuBar createMenu(){
+       JMenuBar menuBar = new JMenuBar();       
+       for (i=0; i<Menu.length; i++) { jMenu[i]=new JMenu(Menu[i]);
+       								   menuBar.add(jMenu[i]); 
+       								 }   
+       
+       menuBar.add(Box.createHorizontalGlue());      
+
+       for(i=0; i<2; i++) {
+				           themeBtnImg = new ImageIcon(imgPath+img[i]);
+				           image = themeBtnImg.getImage();  
+				           nimage = image.getScaledInstance(15, 15, java.awt.Image.SCALE_SMOOTH);  
+				           themeBtnImg = new ImageIcon(nimage);
+				           Btn[i]=new JButton(themeBtnImg);
+				           Btn[i].setPreferredSize(new Dimension(30,15));
+				    	   menuBar.add(Btn[i]); 
+       }
+       
+	   CreateMenuItems();
+	   
+       return menuBar;
+   }
+
+/* Создаём подпункты File */
+   public static void CreateMenuItems(){
+	   for(i=0; i<MenuFileItem.length; i++){ 
+		   									jMenuItem[i] = new JMenuItem(MenuFileItem[i]);  
+	   										jMenu[0].add(jMenuItem[i]); 
+	   										if((i+1)%2==0) jMenu[0].addSeparator();
+	   										}
+       
+	   jMenuItem[jMenuItem.length-1].addActionListener(new ActionListener() {           
+           public void actionPerformed(ActionEvent e) {
+               System.exit(0); }           
+       		});
+   }
+   
+/* Создаём панель инструментов */   
+   public static JPanel CreateToolPanel(){
+	   
+	   JPanel panelCommon = new JPanel(new FlowLayout(FlowLayout.LEFT));
+	   JPanel panelInner = new JPanel(new FlowLayout(FlowLayout.CENTER));
+	   panelCommon.setPreferredSize(new Dimension(100, 40));
+	   panelCommon.setBackground(new Color(51,51,51));
+ 	   panelCommon.setLayout(new BoxLayout(panelCommon, BoxLayout.LINE_AXIS));
+
+       for(i=2; i<Btn.length; i++) {
+				           themeBtnImg = new ImageIcon(imgPath+img[i]);
+				           image = themeBtnImg.getImage();  
+				           nimage = image.getScaledInstance(25, 25, java.awt.Image.SCALE_SMOOTH);  
+				           themeBtnImg = new ImageIcon(nimage);
+				           Btn[i]=new JButton(themeBtnImg);
+				           Btn[i].setPreferredSize(new Dimension(30,30));
+				    	   
+				           if(i==Btn.length-1) {
+					         panelCommon.add(Box.createHorizontalGlue());
+					      	 panelCommon.add(panelInner);
+					         for(j=0; j<inBtn.length; j++) {
+					    	           themeBtnImg = new ImageIcon(imgPath+fgr[j]);
+					    	           image = themeBtnImg.getImage();  
+					    	           nimage = image.getScaledInstance(25, 25, java.awt.Image.SCALE_SMOOTH);  
+					    	           themeBtnImg = new ImageIcon(nimage);
+					    	           inBtn[j]=new JButton(themeBtnImg);
+					    	           inBtn[j].setPreferredSize(new Dimension(30,30));
+					    	    	             
+					    	           panelInner.add(inBtn[j]);   	   
+					             }    
+
+				    	     panelCommon.add(Box.createHorizontalGlue());		           
+				             panelCommon.add(Btn[i]);   	   
+       	}}
+       
+       ActionListener actionListener = new ActionListener() {
+           public void actionPerformed(ActionEvent actionEvent) {
+             Color initialBackground = Btn[Btn.length-1].getBackground();
+             Color background = JColorChooser.showDialog(null, "JColorChooser", initialBackground);
+            /* if (background != null) {
+               Btn[5].setBackground(background);
+             }*/
+           }
+         };
+         Btn[Btn.length-1].addActionListener(actionListener);
+         
+        return panelCommon;
+}
+   
+   public static void createGUI() {       
+       JFrame frame = new JFrame(frameName); 
+       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+       frame.setIconImage(new ImageIcon(imgPath+"icon.png").getImage());
+       frame.setJMenuBar(createMenu());  
+
+       frame.getContentPane().setLayout(new BorderLayout());
+       frame.getContentPane().add(CreateToolPanel(), BorderLayout.PAGE_START);
+       frame.setSize(screen.width/2, screen.height/2);
+       frame.setLocationRelativeTo(null);
+       frame.setVisible(true);
+   }
+
+   public static void main(String[] args) {
+               
+        	   try {
+        	      UIManager.setLookAndFeel(new SyntheticaBlackStarLookAndFeel());
+        	    } 
+        	    catch (Exception e) {
+        	      e.printStackTrace();
+        	    }
+
+        	   
+               createGUI();
+   }
+}
+

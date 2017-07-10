@@ -1,0 +1,97 @@
+package win_logic;
+
+import jFontChooser.FontChooser;
+
+import java.awt.*;
+import java.awt.event.*;
+
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.EtchedBorder;
+import javax.swing.event.*;
+import javax.swing.text.*;
+import java.io.Serializable;
+
+public class InvisibleTextField extends JTextPane implements FocusListener, MouseListener, DocumentListener{
+public static int writeTextFlag=0;
+	
+	public InvisibleTextField(){
+		ToolsLogic.drawMode=3;
+		
+		Border border = BorderFactory.createLineBorder(Color.BLACK);
+		setBorder(BorderFactory.createCompoundBorder(border,BorderFactory.createEmptyBorder(2, 3, 2, 5)));
+		
+        setOpaque( false );
+        
+        //setColumns( 1 );
+        
+        setCaretColor(new Color(121,180,42));
+        setFont(ToolsLogic.textAreaFont);
+        setSize(getPreferredSize());
+        
+        //setColumns( 0 );
+        addKeyListener(new KeyAdapter()
+        {
+            public void keyPressed(KeyEvent e)
+            {
+            	//CTRL+F - изменить стиль текста
+                AWTKeyStroke ak = AWTKeyStroke.getAWTKeyStrokeForEvent(e);
+                if(ak.equals(AWTKeyStroke.getAWTKeyStroke(KeyEvent.VK_F,InputEvent.CTRL_MASK))){
+                	FontChooser fontChooser = new FontChooser(null, new Font("Times New Roman", Font.PLAIN, 12)); // http://java-articles.info/articles/?p=272
+		        	 
+		        	if (fontChooser.isOkPressed()) {
+		        	  ToolsLogic.textAreaFont = fontChooser.getSelectedFont(); // »зменили параметры текста
+		        	  
+		             }
+		        	setFont(ToolsLogic.textAreaFont);
+		   		              
+		            setSize(getPreferredSize());
+                }
+                
+                if(ak.equals(AWTKeyStroke.getAWTKeyStroke(KeyEvent.VK_D,InputEvent.CTRL_MASK))){ 
+                
+   	            ColorPanel.textColor = JColorChooser.showDialog(null, "JColorChooser", ColorPanel.textColor);
+   	            ColorPanel.textColorPanel.setBackground(ColorPanel.textColor);
+                	                	
+	            StyleContext sc = StyleContext.getDefaultStyleContext();
+	              AttributeSet attrs = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, ColorPanel.textColor);
+	              StyledDocument doc = getStyledDocument();
+	              doc.setCharacterAttributes(0, getText().length(), attrs, true);
+                }
+                
+                if(e.getKeyCode()==KeyEvent.VK_DELETE) setSize(getPreferredSize());
+                
+                if(ak.equals(AWTKeyStroke.getAWTKeyStroke(KeyEvent.VK_E,InputEvent.CTRL_MASK))){
+                	writeTextFlag=1;  DrawPanel.InvTextField=0; removeTextField();
+                }
+                
+            }
+        });
+        addFocusListener( this );
+        addMouseListener( this );
+        getDocument().addDocumentListener( this );
+	}
+    
+    public void actionPerformed(ActionEvent e) { 
+    	setEditable(true);
+    }
+    public void focusLost(FocusEvent e)  {  setEditable(true);
+    }
+    public void insertUpdate(DocumentEvent e) { updateSize(); }
+    
+    public void updateSize() { setSize( new Dimension((int)getPreferredSize().getWidth()+5, (int)getPreferredSize().getHeight()) ); }
+    
+    public void removeUpdate(DocumentEvent e) { updateSize(); }
+
+    public void mouseClicked( MouseEvent e ) { 
+    	if (e.getClickCount() == 2) setEditable(true);
+    }
+    
+    public void focusGained(FocusEvent e) {}
+    public void mouseEntered( MouseEvent e ) {}
+    public void mouseExited( MouseEvent e ) {}
+    public void mousePressed( MouseEvent e ) {}
+    public void mouseReleased( MouseEvent e ) {}
+    public void changedUpdate(DocumentEvent e) {}
+}

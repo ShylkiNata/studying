@@ -1,0 +1,43 @@
+package win_logic;
+
+	import java.net.*;
+import java.io.*;
+
+import win_model.ServerData;
+	public class ServerLogic implements Runnable {
+	int port;
+		
+	public ServerLogic(int port){
+       this.port=port;
+	}
+	
+	@Override
+	public void run() {
+		// случайный порт (может быть любое число от 1025 до 65535)
+	     
+	       try {
+	         ServerSocket ss = new ServerSocket(port); // создаем сокет сервера и привязываем его к вышеуказанному порту
+	         System.out.println("Waiting for a client...");
+
+	         Socket socket = ss.accept(); // заставляем сервер ждать подключений и выводим сообщение когда кто-то связался с сервером
+	         System.out.println("Got a client :) ... Finally, someone saw me through all the cover!");
+
+	         ServerData.GotAServerFLAG=1;
+
+	 // Берем входной и выходной потоки сокета, теперь можем получать и отсылать данные клиенту. 
+	         ObjectInputStream inS = new ObjectInputStream(socket.getInputStream());
+	         ObjectOutputStream outS = new ObjectOutputStream(socket.getOutputStream());
+	
+	           //line = in.readUTF(); // ожидаем пока клиент пришлет строку текста.
+	           //System.out.println("The dumb client just sent me this line : " + line);
+	          // System.out.println("I'm sending it back...");
+	         out.write(DrawPanel.ModeOrder.size());
+	         for(int i=0; i<DrawPanel.ModeOrder.size(); i++) out.write(DrawPanel.ModeOrder.get(i)); // отсылаем клиенту обратно ту самую строку текста.
+	          
+	         out.flush(); // заставляем поток закончить передачу данных.
+	           System.out.println("Done...");
+	           System.out.println();
+	         
+	      } catch(Exception x) { x.printStackTrace(); } 
+	}
+}

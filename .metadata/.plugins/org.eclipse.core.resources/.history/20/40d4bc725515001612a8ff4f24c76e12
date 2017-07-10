@@ -1,0 +1,121 @@
+import java.awt.event.*;
+import javax.swing.*;
+import javax.swing.event.*;
+/*
+public class JMenuItemSetAcceleratorTest implements ActionListener {
+   JFrame myFrame = null;
+   public static void main(String[] a) {
+      (new JMenuItemSetAcceleratorTest()).test();
+   }
+   private void test() {
+      myFrame = new JFrame("Menu Item Accelerator Test");
+      myFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      myFrame.setBounds(50,50,250,150);
+      myFrame.setContentPane(new JDesktopPane());
+
+      JMenuBar myMenuBar = new JMenuBar();
+      JMenu myMenu = getFileMenu();
+      myMenuBar.add(myMenu);
+      myMenu = getColorMenu();
+      myMenuBar.add(myMenu);
+      myMenu = getOptionMenu();
+      myMenuBar.add(myMenu);
+
+      JMenuItem myItem = new JMenuItem("Help");
+      myItem.setMnemonic(KeyEvent.VK_H);
+      myItem.setAccelerator(
+         KeyStroke.getKeyStroke(KeyEvent.VK_P, ActionEvent.CTRL_MASK));
+      myItem.addActionListener(this);
+      myMenuBar.add(myItem);
+
+      myFrame.setJMenuBar(myMenuBar);
+      myFrame.setVisible(true);
+   }
+   private JMenu getFileMenu() {
+      JMenu myMenu = new JMenu("File");
+      JMenuItem myItem = new JMenuItem("Open");
+      myMenu.add(myItem);
+      myItem = new JMenuItem("Close");
+      myMenu.add(myItem);
+      myMenu.addSeparator();
+      myItem = new JMenuItem("Exit");
+      myMenu.add(myItem);
+      return myMenu;
+   }
+   private JMenu getColorMenu() {
+      JMenu myMenu = new JMenu("Color");
+      ButtonGroup myGroup = new ButtonGroup();
+
+      JRadioButtonMenuItem myItem = new JRadioButtonMenuItem("Red");
+      myItem.setSelected(true);
+      myItem.setMnemonic(KeyEvent.VK_R);
+      myItem.setAccelerator(
+         KeyStroke.getKeyStroke(KeyEvent.VK_D, ActionEvent.CTRL_MASK));
+      myItem.addActionListener(this);
+      myGroup.add(myItem);
+      myMenu.add(myItem);
+
+      myItem = new JRadioButtonMenuItem("Green");
+      myItem.setMnemonic(KeyEvent.VK_G);
+      myItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
+      myItem.addActionListener(this);
+      myGroup.add(myItem);
+      myMenu.add(myItem);
+
+      myItem = new JRadioButtonMenuItem("Blue");
+      myItem.setMnemonic(KeyEvent.VK_B);
+      myItem.setAccelerator(
+         KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.CTRL_MASK));
+      myItem.addActionListener(this);
+      myGroup.add(myItem);
+      myMenu.add(myItem);
+
+      return myMenu;
+   }
+   private JMenu getOptionMenu() {
+      JMenu myMenu = new JMenu("Option");
+      JMenuItem myItem = new JMenuItem("Sound");
+      myMenu.add(myItem);
+      myItem = new JMenuItem("Auto save");
+      myMenu.add(myItem);
+      return myMenu;
+   }
+   public void actionPerformed(ActionEvent e) {
+      System.out.println("Item clicked: "+e.getActionCommand());
+   }
+}*/
+import javax.swing.*;
+import java.awt.*;
+
+public class JMenuItemSetAcceleratorTest {
+
+	JFrame frame = new JFrame("BorderLayout demo");
+	JButton btn1 = new JButton("NORTH");
+	JButton btn2 = new JButton("SOUTH");
+	JButton btn3 = new JButton("CENTER");
+	JButton btn4 = new JButton("WEST");
+	JButton btn5 = new JButton("EAST");
+
+	public JMenuItemSetAcceleratorTest() {
+		frame.setLayout(new BorderLayout());
+		frame.add(btn1, BorderLayout.NORTH);
+		frame.add(btn2, BorderLayout.SOUTH);
+		frame.add(btn3, BorderLayout.CENTER);
+		frame.add(btn4, BorderLayout.WEST);
+		frame.add(btn5, BorderLayout.EAST);
+		
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.pack();
+		frame.setVisible(true);
+	}
+
+	public static void main(String[] args) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				new JMenuItemSetAcceleratorTest();
+			}
+		});
+	}
+
+}

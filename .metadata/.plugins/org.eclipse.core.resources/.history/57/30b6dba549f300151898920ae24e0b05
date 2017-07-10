@@ -1,0 +1,99 @@
+package win_style;
+
+import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.FileInputStream;
+ 
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import de.javasoft.plaf.synthetica.SyntheticaBlackStarLookAndFeel;
+
+public class WindowCreation extends JFrame{
+   static String frameName="Jade", iconPath="/project/diploma/img/icon.png";
+   static String [] Menu = {"File", "Tools", "Image", "Theme"};
+   static JMenu [] jMenu = new JMenu [Menu.length];
+   static int i;
+   
+/* Создаём панель меню с основными пунктами */
+   public static JMenuBar createMenu(){
+       JMenuBar menuBar = new JMenuBar();       
+       for (i=0; i<Menu.length; i++) { jMenu[i]=new JMenu(Menu[i]); 
+       								   if(i==Menu.length-1) {
+       									   					menuBar.add(Box.createHorizontalGlue());  
+       								   }
+       								   menuBar.add(jMenu[i]); 
+       								   }   
+       return menuBar;
+   }
+   
+/* Создаём подпункты главного меню */
+   public static void createGUI() {       
+       JFrame frame = new JFrame(frameName);      
+       
+   /*       
+        
+       JMenuItem txtFileItem = new JMenuItem("Text file");
+       newMenu.add(txtFileItem);
+        
+       JMenuItem imgFileItem = new JMenuItem("Image file");
+       newMenu.add(imgFileItem);
+        
+       JMenuItem folderItem = new JMenuItem("Folder");
+       newMenu.add(folderItem);
+        
+       JMenuItem openItem = new JMenuItem("Open");
+       fileMenu.add(openItem);
+        
+       JMenuItem closeItem = new JMenuItem("Close");
+       fileMenu.add(closeItem);
+        
+       JMenuItem closeAllItem = new JMenuItem("Close all");
+       fileMenu.add(closeAllItem);
+        
+       fileMenu.addSeparator();
+        
+       JMenuItem exitItem = new JMenuItem("Exit");
+       fileMenu.add(exitItem);
+        
+       exitItem.addActionListener(new ActionListener() {           
+           public void actionPerformed(ActionEvent e) {
+               System.exit(0);             
+           }           
+       });
+        */
+
+                
+       frame.setJMenuBar(createMenu());
+        
+       frame.setPreferredSize(new Dimension(270, 225));
+       frame.pack();
+       frame.setLocationRelativeTo(null);
+       frame.setVisible(true);
+       
+       frame.setIconImage(new ImageIcon(iconPath).getImage());
+       
+   }
+
+   public static void main(String[] args) {
+       javax.swing.SwingUtilities.invokeLater(new Runnable() {
+           public void run() {
+               
+        	   try 
+        	    {
+        	      UIManager.setLookAndFeel(new SyntheticaBlackStarLookAndFeel());
+        	    } 
+        	    catch (Exception e) 
+        	    {
+        	      e.printStackTrace();
+        	    }
+
+        	   
+               createGUI();
+           }
+       });
+   }
+}
+

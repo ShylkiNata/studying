@@ -1,0 +1,504 @@
+package win_logic;
+
+import java.awt.AWTException;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.MouseInfo;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Robot;
+import java.awt.Shape;
+import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Path2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.imageio.ImageIO;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
+import de.javasoft.plaf.synthetica.painter.TextAreaPainter;
+
+import win_style.*;
+
+public class DrawPanel extends JPanel {
+	
+    private Point startPoint, endPoint;
+    private Shape shape;
+    private Path2D path;
+    double t; int r,R;
+	static int InvTextField=0;
+    
+    static JPanel jp; static BufferedImage img;
+    static InvisibleTextField tf = new InvisibleTextField(); 
+    
+    public static List<Point[]> FigureOrder;
+    
+    public static ArrayList <Integer> ModeOrder = new ArrayList <Integer>();
+    public static ArrayList <Color> ColorOrder = new ArrayList <Color>();
+    public static ArrayList <Float> WidthOrder = new ArrayList <Float>();
+    
+    public static ArrayList <Integer> ObjOutlineOrder = new ArrayList <Integer>(); // закрашенная или незакрашенная фигура 
+    public static ArrayList <Color> ColorFillOrder = new ArrayList <Color>();
+    
+    public static ArrayList <Shape> ShapeOrder = new ArrayList <Shape>(); 
+    public static ArrayList <String> StringOrder = new ArrayList <String>();  
+    public static ArrayList <Font> FontOrder = new ArrayList <Font>();
+    
+    static int i=0;
+	int shape_i=0;
+    
+    public DrawPanel() {
+    	setBackground(Color.white);
+    	
+        FigureOrder = new ArrayList<>(25);
+               
+        MouseAdapter ma = new MouseAdapter() {
+        	
+            @Override
+            public void mouseClicked(MouseEvent e) {
+            	if(new ToolsLogic().get_objColor()==1) { //picker
+            		try{
+            		   Robot robot=new Robot();
+            		   Color color = robot.getPixelColor((int)MouseInfo.getPointerInfo().getLocation().getX(),(int)MouseInfo.getPointerInfo().getLocation().getY());//new Color(img.getRGB(e.getPoint().x,e.getPoint().y));
+            			
+            		   switch(new ColorPanel().get_colorMode()){
+            		     case 1: new ColorPanel().set_lineColor(color); break;
+            		     case 2: new ColorPanel().set_fillColor(color); break;
+            		     case 3: new ColorPanel().set_textColor(color); break;
+                       }
+            		}
+            		catch(AWTException ae) { ae.printStackTrace(); }
+            	}
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            	if(new ToolsLogic().get_objColor()!=1) {
+	                startPoint = e.getPoint();
+	                if(new ToolsLogic().get_drawMode()<3){
+	                	path = new Path2D.Double();
+	                    shape = path;
+	                }
+	     
+		        }
+                
+       //     	jp = (JPanel)e.getSource();
+            	
+            	
+                if (e.getClickCount()==1){
+                 jp.requestFocusInWindow();
+            		if(tf.getText().length()>0)System.out.println(tf.getText());	
+                }
+                
+                if (e.getClickCount()==2){
+                	InvTextField=1;
+                	jp.setLayout(null);
+                	InvisibleTextField tf = new InvisibleTextField();
+                    tf.setLocation(e.getPoint());
+                    
+                    jp.add(tf);
+                    tf.requestFocusInWindow();
+                }
+                
+            
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            	if(new ToolsLogic().get_objColor()!=1) {
+	                endPoint = e.getPoint();
+	                
+	                if( new ToolsLogic().get_drawMode()<3 ){
+	                    path.moveTo(startPoint.x, startPoint.y);
+	                    path.lineTo(endPoint.x, endPoint.y);
+	                    shape = path;
+	                    ShapeOrder.add(shape);
+	                }
+	                                
+	                if (InvTextField==0){
+	                Point[] points = new Point[]{startPoint, endPoint};
+	                FigureOrder.add(points); 
+	                
+		            startPoint = null;
+		            endPoint = null;
+	                
+	                ModeOrder.add(new ToolsLogic().get_drawMode());
+	                WidthOrder.add(new ToolsLogic().get_lineWidth());
+	                ColorOrder.add(ColorPanel.lineColor);
+	                ObjOutlineOrder.add(new ToolsLogic().get_objOutline()); // закрашено 2/не закрашено 1
+	                ColorFillOrder.add(new ColorPanel().get_fillColor()); // цвета закрашенного
+	                
+	                ToolsLogic.createAlternateArray=1;
+	                
+	                System.out.println("1234567");
+	                
+	                repaint(); }   
+            	}
+            }
+
+            @Override
+            public void mouseDragged(MouseEvent e) {
+            	
+            if(new ToolsLogic().get_objColor()!=1) {	
+                endPoint = e.getPoint();  
+                if(new ToolsLogic().get_drawMode()<3){
+                    path.moveTo(startPoint.x, startPoint.y);
+                    path.lineTo(endPoint.x, endPoint.y);
+                    shape = path;
+                    startPoint = endPoint;
+                }
+                repaint();
+            }}
+
+        };
+
+        addMouseListener(ma);
+        addMouseMotionListener(ma);
+     }
+
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D) g.create();
+        shape_i=0;
+        
+        if(MainMenuLogic.eraseFlag==1) { clearArea(); MainMenuLogic.eraseFlag=0; repaint();}
+        
+        i=0;
+        for (Point[] p : FigureOrder) {
+
+        	g2.setColor(ColorOrder.get(i));
+        	g2.setStroke(new BasicStroke(WidthOrder.get(i)));
+        	g.setColor(ColorOrder.get(i));
+			((Graphics2D) g).setStroke(new BasicStroke(WidthOrder.get(i)));
+			
+			if(ObjOutlineOrder.get(i)==1) objOutline1(g2, g, p); // без заполнения
+			else objOutline1Fill(g2, g, p);   // с заполнением
+        }
+               
+        if (startPoint != null && endPoint != null) {
+        	
+            g2.setStroke(new BasicStroke(new ToolsLogic().get_lineWidth()));
+			((Graphics2D) g).setStroke(new BasicStroke(new ToolsLogic().get_lineWidth()));
+            
+			if(new ToolsLogic().get_objOutline()==1) objOutlineSE1(g2,g, startPoint,endPoint); // без заполнения
+			else objOutlineSE1Fill(g2,g, startPoint,endPoint);
+			// с заполнением
+			
+   	
+        }
+        
+        jp=this;
+        //g2.dispose(); g.dispose();
+    }
+    
+    
+    
+    
+    void objOutline1(Graphics2D g2, Graphics g, Point[] p){	
+    	switch(ModeOrder.get(i)){
+    	case  0: g2.setStroke(new BasicStroke(1));
+    			 g2.draw(ShapeOrder.get(shape_i));
+        		 shape_i++;
+    			 break;
+    	case  1: g2.draw(ShapeOrder.get(shape_i));
+				 shape_i++;
+				 break;
+    	case  2: g2.setColor(Color.white);
+    			 g2.draw(ShapeOrder.get(shape_i));
+				 shape_i++;
+				 break;
+    	case 10: g2.drawLine(p[0].x, p[0].y, p[1].x, p[1].y);
+    		     break;     	
+    	case 11: if((p[0].x<p[1].x) && (p[0].y<p[1].y)) {
+				 	g2.drawOval(p[0].x, p[0].y, p[1].x-p[0].x, p[1].y-p[0].y);
+    			 }
+    			 else if((p[0].x>p[1].x) && (p[0].y>p[1].y))
+					g2.drawOval(p[1].x, p[1].y, p[0].x-p[1].x, p[0].y-p[1].y);
+    			 else if(p[0].x>p[1].x)
+	    			g2.drawOval(p[1].x, p[0].y, p[0].x-p[1].x, p[1].y-p[0].y);
+    			 else
+					g2.drawOval(p[0].x, p[1].y, p[1].x-p[0].x, p[0].y-p[1].y);
+			     break; 
+    	case 12: if((p[0].x<p[1].x) && (p[0].y<p[1].y))
+    			 	g2.drawRect(p[0].x, p[0].y, p[1].x-p[0].x, p[1].y-p[0].y);
+    			 else if((p[0].x>p[1].x) && (p[0].y>p[1].y))
+					g2.drawRect(p[1].x, p[1].y, p[0].x-p[1].x, p[0].y-p[1].y);
+    			 else if(p[0].x>p[1].x)
+	    			g2.drawRect(p[1].x, p[0].y, p[0].x-p[1].x, p[1].y-p[0].y);
+    			 else
+					g2.drawRect(p[0].x, p[1].y, p[1].x-p[0].x, p[0].y-p[1].y);
+ 		 		 break; 
+    	case 13: g.drawPolygon(new int [] {2*p[0].x-p[1].x, p[0].x, p[1].x}, new int [] {p[1].y, p[0].y, p[1].y}, 3);
+	     		 break;
+    	case 14: g.drawPolygon(new int [] {2*p[0].x-p[1].x, p[0].x, p[1].x, p[0].x}, new int [] {p[1].y, p[0].y, p[1].y, 2*p[1].y-p[0].y}, 4);
+				 break;        		
+	   	case 15: 			 
+				 t = Math.sqrt(Math.pow(p[1].x-p[0].x, 2)+Math.pow(p[1].y-p[0].y, 2));
+				 r = (int) ( ( (Math.sqrt(5)*( Math.sqrt(5+2*Math.sqrt(5)) ))/10) *t );	 
+				 R = (int) (Math.sqrt(5)-1)*r;
+				 
+				 if(p[1].y>p[0].y) ((Graphics2D) g).drawPolygon(new int [] {2*p[0].x-p[1].x, p[0].x, p[1].x, (int) ((p[0].x+p[1].x)/2), (int) ((p[0].x+2*p[0].x-p[1].x)/2)}, new int [] {p[1].y, p[0].y, p[1].y, (int) (p[0].y+r+R), (int) (p[0].y+r+R)}, 5);
+				 else ((Graphics2D) g).drawPolygon(new int [] {2*p[0].x-p[1].x, p[0].x, p[1].x, (int) ((p[0].x+p[1].x)/2), (int) ((p[0].x+2*p[0].x-p[1].x)/2)}, new int [] {p[1].y, p[0].y, p[1].y, (int) (p[0].y-r-R), (int) (p[0].y-r-R)}, 5);
+				 break;        		
+	    		 
+    	}
+    	i++;
+    }
+    void objOutline1Fill(Graphics2D g2, Graphics g, Point[] p){	
+    	switch(ModeOrder.get(i)){
+    	case  0: g2.setStroke(new BasicStroke(1));
+    			 g2.draw(ShapeOrder.get(shape_i));
+        		 shape_i++;
+    			 break;
+    	case  1: g2.draw(ShapeOrder.get(shape_i));
+				 shape_i++;
+				 break;
+    	case  2: g2.setColor(Color.white);
+    			 g2.draw(ShapeOrder.get(shape_i));
+				 shape_i++;
+				 break;
+    	case 10: g2.drawLine(p[0].x, p[0].y, p[1].x, p[1].y);
+    		     break;     	
+    	case 11: g2.setColor(ColorFillOrder.get(i));
+    			 if((p[0].x<p[1].x) && (p[0].y<p[1].y)) {
+				 	g2.fillOval(p[0].x, p[0].y, p[1].x-p[0].x, p[1].y-p[0].y);
+    		     	g2.setColor(ColorOrder.get(i)); g2.drawOval(p[0].x, p[0].y, p[1].x-p[0].x, p[1].y-p[0].y);
+    			 }
+    			 else if((p[0].x>p[1].x) && (p[0].y>p[1].y)) {
+					g2.fillOval(p[1].x, p[1].y, p[0].x-p[1].x, p[0].y-p[1].y);
+    		     	g2.setColor(ColorOrder.get(i)); g2.drawOval(p[1].x, p[1].y, p[0].x-p[1].x, p[0].y-p[1].y);
+    			 }
+    			 else if(p[0].x>p[1].x){
+	    			g2.fillOval(p[1].x, p[0].y, p[0].x-p[1].x, p[1].y-p[0].y);
+    		     	g2.setColor(ColorOrder.get(i)); g2.drawOval(p[1].x, p[0].y, p[0].x-p[1].x, p[1].y-p[0].y);
+    			 }
+    			 else{
+					g2.fillOval(p[0].x, p[1].y, p[1].x-p[0].x, p[0].y-p[1].y);
+    		     	g2.setColor(ColorOrder.get(i)); g2.drawOval(p[0].x, p[1].y, p[1].x-p[0].x, p[0].y-p[1].y);
+    			 }
+			     break; 
+    	case 12: g2.setColor(ColorFillOrder.get(i));
+    			 if((p[0].x<p[1].x) && (p[0].y<p[1].y))	{
+    				g2.fillRect(p[0].x, p[0].y, p[1].x-p[0].x, p[1].y-p[0].y);
+    		     	g2.setColor(ColorOrder.get(i)); g2.drawRect(p[0].x, p[0].y, p[1].x-p[0].x, p[1].y-p[0].y);
+    		     }
+    			 else if((p[0].x>p[1].x) && (p[0].y>p[1].y)) {
+					g2.fillRect(p[1].x, p[1].y, p[0].x-p[1].x, p[0].y-p[1].y);
+					g2.setColor(ColorOrder.get(i)); g2.drawRect(p[1].x, p[1].y, p[0].x-p[1].x, p[0].y-p[1].y);
+    			 }
+    			 else if(p[0].x>p[1].x) {
+	    			g2.fillRect(p[1].x, p[0].y, p[0].x-p[1].x, p[1].y-p[0].y);
+	    			g2.setColor(ColorOrder.get(i)); g2.drawRect(p[1].x, p[0].y, p[0].x-p[1].x, p[1].y-p[0].y);
+    			 }
+    			 else {
+					g2.fillRect(p[0].x, p[1].y, p[1].x-p[0].x, p[0].y-p[1].y);
+					g2.setColor(ColorOrder.get(i)); g2.drawRect(p[0].x, p[1].y, p[1].x-p[0].x, p[0].y-p[1].y);
+    			 }
+ 		 		 break; 
+    	case 13: g.setColor(ColorFillOrder.get(i));
+    			 g.fillPolygon(new int [] {2*p[0].x-p[1].x, p[0].x, p[1].x}, new int [] {p[1].y, p[0].y, p[1].y}, 3);
+    			 g.setColor(ColorOrder.get(i));
+    			 g.drawPolygon(new int [] {2*p[0].x-p[1].x, p[0].x, p[1].x}, new int [] {p[1].y, p[0].y, p[1].y}, 3);
+	     		 break;
+    	case 14: g.setColor(ColorFillOrder.get(i));
+    		     g.fillPolygon(new int [] {2*p[0].x-p[1].x, p[0].x, p[1].x, p[0].x}, new int [] {p[1].y, p[0].y, p[1].y, 2*p[1].y-p[0].y}, 4);
+    		     g.setColor(ColorOrder.get(i));
+    		     g.drawPolygon(new int [] {2*p[0].x-p[1].x, p[0].x, p[1].x, p[0].x}, new int [] {p[1].y, p[0].y, p[1].y, 2*p[1].y-p[0].y}, 4);
+    		     break;        		
+	   	case 15: g.setColor(ColorFillOrder.get(i));		 
+				 t = Math.sqrt(Math.pow(p[1].x-p[0].x, 2)+Math.pow(p[1].y-p[0].y, 2));
+				 r = (int) ( ( (Math.sqrt(5)*( Math.sqrt(5+2*Math.sqrt(5)) ))/10) *t );	 
+				 R = (int) (Math.sqrt(5)-1)*r;
+				 
+				 if(p[1].y>p[0].y) {
+					 ((Graphics2D) g).fillPolygon(new int [] {2*p[0].x-p[1].x, p[0].x, p[1].x, (int) ((p[0].x+p[1].x)/2), (int) ((p[0].x+2*p[0].x-p[1].x)/2)}, new int [] {p[1].y, p[0].y, p[1].y, (int) (p[0].y+r+R), (int) (p[0].y+r+R)}, 5);
+	    			 g.setColor(ColorOrder.get(i));
+					 ((Graphics2D) g).drawPolygon(new int [] {2*p[0].x-p[1].x, p[0].x, p[1].x, (int) ((p[0].x+p[1].x)/2), (int) ((p[0].x+2*p[0].x-p[1].x)/2)}, new int [] {p[1].y, p[0].y, p[1].y, (int) (p[0].y+r+R), (int) (p[0].y+r+R)}, 5);	    			 
+				 }
+				 else {
+					 ((Graphics2D) g).fillPolygon(new int [] {2*p[0].x-p[1].x, p[0].x, p[1].x, (int) ((p[0].x+p[1].x)/2), (int) ((p[0].x+2*p[0].x-p[1].x)/2)}, new int [] {p[1].y, p[0].y, p[1].y, (int) (p[0].y-r-R), (int) (p[0].y-r-R)}, 5);
+	    			 g.setColor(ColorOrder.get(i));
+					 ((Graphics2D) g).drawPolygon(new int [] {2*p[0].x-p[1].x, p[0].x, p[1].x, (int) ((p[0].x+p[1].x)/2), (int) ((p[0].x+2*p[0].x-p[1].x)/2)}, new int [] {p[1].y, p[0].y, p[1].y, (int) (p[0].y-r-R), (int) (p[0].y-r-R)}, 5);
+				 }
+				 break;        		
+	    		 
+    	}
+    	i++;
+    }
+    
+      
+    void objOutlineSE1(Graphics2D g2, Graphics g, Point startPoint, Point endPoint){
+    	
+        g2.setColor(new ColorPanel().get_lineColor());
+        g.setColor(new ColorPanel().get_lineColor());
+    	
+       	switch(new ToolsLogic().get_drawMode()){
+    	case  0: g2.setStroke(new BasicStroke(1));
+    			 g2.draw(shape);
+				 break;
+    	case  1: g2.draw(shape);
+				 break;
+    	case  2: g2.setColor(Color.white);
+    			 g2.draw(shape);
+				 break;
+    	case 10: g2.drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y);
+    		     break;    
+    	case 11: if((endPoint.x>startPoint.x) && (endPoint.y>startPoint.y)) {
+					g2.drawOval(startPoint.x, startPoint.y, endPoint.x-startPoint.x, endPoint.y-startPoint.y);
+    			 }
+    			 else if((endPoint.x<startPoint.x) && (endPoint.y<startPoint.y))
+					g2.drawOval(endPoint.x, endPoint.y, startPoint.x-endPoint.x, startPoint.y-endPoint.y);	
+    			 else if(endPoint.x<startPoint.x) 
+			    	g2.drawOval(endPoint.x, startPoint.y, startPoint.x-endPoint.x, endPoint.y-startPoint.y);
+    			 else  
+					g2.drawOval(startPoint.x, endPoint.y, endPoint.x-startPoint.x, startPoint.y-endPoint.y);
+				 break;
+    	case 12: if((endPoint.x>startPoint.x) && (endPoint.y>startPoint.y))
+    				g2.drawRect(startPoint.x, startPoint.y, endPoint.x-startPoint.x, endPoint.y-startPoint.y);
+    			 else if((endPoint.x<startPoint.x) && (endPoint.y<startPoint.y))
+					g2.drawRect(endPoint.x, endPoint.y, startPoint.x-endPoint.x, startPoint.y-endPoint.y);	
+    			 else if(endPoint.x<startPoint.x) 
+    		    	g2.drawRect(endPoint.x, startPoint.y, startPoint.x-endPoint.x, endPoint.y-startPoint.y);
+    			 else 
+    				g2.drawRect(startPoint.x, endPoint.y, endPoint.x-startPoint.x, startPoint.y-endPoint.y);    			 
+ 		 		 break; 
+    	case 13: g.drawPolygon(new int [] {2*startPoint.x-endPoint.x, startPoint.x, endPoint.x}, new int [] {endPoint.y, startPoint.y, endPoint.y}, 3);
+		 		 break;
+    	case 14: g.drawPolygon(new int [] {2*startPoint.x-endPoint.x, startPoint.x, endPoint.x, startPoint.x}, new int [] {endPoint.y, startPoint.y, endPoint.y, 2*endPoint.y-startPoint.y}, 4);
+				 break;    
+    	case 15: 				 
+				 t = Math.sqrt(Math.pow(endPoint.x-startPoint.x, 2)+Math.pow(endPoint.y-startPoint.y, 2));
+				 r = (int) ( ( (Math.sqrt(5)*( Math.sqrt(5+2*Math.sqrt(5)) ))/10) *t );	 
+				 R = (int) (Math.sqrt(5)-1)*r;
+
+				 if(endPoint.y>startPoint.y) g.drawPolygon(new int [] {2*startPoint.x-endPoint.x, startPoint.x, endPoint.x, (int) ((startPoint.x+endPoint.x)/2), (int) ((startPoint.x+2*startPoint.x-endPoint.x)/2)}, new int [] {endPoint.y, startPoint.y, endPoint.y, (int) (startPoint.y+r+R), (int) (startPoint.y+r+R)}, 5);
+				 else g.drawPolygon(new int [] {2*startPoint.x-endPoint.x, startPoint.x, endPoint.x, (int) ((startPoint.x+endPoint.x)/2), (int) ((startPoint.x+2*startPoint.x-endPoint.x)/2)}, new int [] {endPoint.y, startPoint.y, endPoint.y, (int) (startPoint.y-r-R), (int) (startPoint.y-r-R)}, 5);
+				 break;
+    	}
+    }
+    
+    void objOutlineSE1Fill(Graphics2D g2, Graphics g, Point startPoint, Point endPoint){
+    	
+        g2.setColor(new ColorPanel().get_fillColor());
+        g.setColor(new ColorPanel().get_fillColor());
+    	
+       	switch(new ToolsLogic().get_drawMode()){
+    	case  0: g2.setColor(new ColorPanel().get_lineColor());
+    			 g2.setStroke(new BasicStroke(1));
+    			 g2.draw(shape);
+				 break;
+    	case  1: g2.setColor(new ColorPanel().get_lineColor());
+    			 g2.draw(shape);
+				 break;
+    	case  2: g2.setColor(Color.white);
+    			 g2.draw(shape);
+				 break;
+    	case 10: g2.setColor(new ColorPanel().get_lineColor());
+    			 g2.drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y);
+    		     break;    
+    	case 11: if((endPoint.x>startPoint.x) && (endPoint.y>startPoint.y)) {
+					g2.fillOval(startPoint.x, startPoint.y, endPoint.x-startPoint.x, endPoint.y-startPoint.y);
+					g2.setColor(new ColorPanel().get_lineColor());	g2.drawOval(startPoint.x, startPoint.y, endPoint.x-startPoint.x, endPoint.y-startPoint.y);	
+    			 }
+    			 else if((endPoint.x<startPoint.x) && (endPoint.y<startPoint.y)) {
+					g2.fillOval(endPoint.x, endPoint.y, startPoint.x-endPoint.x, startPoint.y-endPoint.y);	
+					g2.setColor(new ColorPanel().get_lineColor());	g2.drawOval(endPoint.x, endPoint.y, startPoint.x-endPoint.x, startPoint.y-endPoint.y);	
+    			 }
+    			 else if(endPoint.x<startPoint.x) {
+			    	g2.fillOval(endPoint.x, startPoint.y, startPoint.x-endPoint.x, endPoint.y-startPoint.y);
+					g2.setColor(new ColorPanel().get_lineColor());	g2.drawOval(endPoint.x, startPoint.y, startPoint.x-endPoint.x, endPoint.y-startPoint.y);				    	
+    			 }
+    			 else {
+					g2.fillOval(startPoint.x, endPoint.y, endPoint.x-startPoint.x, startPoint.y-endPoint.y);
+					g2.setColor(new ColorPanel().get_lineColor());	g2.drawOval(startPoint.x, endPoint.y, endPoint.x-startPoint.x, startPoint.y-endPoint.y);					
+    			 }
+				 break;
+    	case 12: if((endPoint.x>startPoint.x) && (endPoint.y>startPoint.y)) {
+    				g2.fillRect(startPoint.x, startPoint.y, endPoint.x-startPoint.x, endPoint.y-startPoint.y);
+					g2.setColor(new ColorPanel().get_lineColor());	g2.drawRect(startPoint.x, startPoint.y, endPoint.x-startPoint.x, endPoint.y-startPoint.y);   				
+    			 }
+    			 else if((endPoint.x<startPoint.x) && (endPoint.y<startPoint.y)) {
+					g2.fillRect(endPoint.x, endPoint.y, startPoint.x-endPoint.x, startPoint.y-endPoint.y);
+					g2.setColor(new ColorPanel().get_lineColor());	g2.drawRect(endPoint.x, endPoint.y, startPoint.x-endPoint.x, startPoint.y-endPoint.y);					
+    			 }
+    			 else if(endPoint.x<startPoint.x) {
+    		    	g2.fillRect(endPoint.x, startPoint.y, startPoint.x-endPoint.x, endPoint.y-startPoint.y);
+					g2.setColor(new ColorPanel().get_lineColor());	g2.drawRect(endPoint.x, startPoint.y, startPoint.x-endPoint.x, endPoint.y-startPoint.y);		    		    	
+    			 }
+    			 else {
+    				g2.fillRect(startPoint.x, endPoint.y, endPoint.x-startPoint.x, startPoint.y-endPoint.y); 
+					g2.setColor(new ColorPanel().get_lineColor());	g2.drawRect(startPoint.x, endPoint.y, endPoint.x-startPoint.x, startPoint.y-endPoint.y);    				
+    			 }
+ 		 		 break; 
+    	case 13: g.fillPolygon(new int [] {2*startPoint.x-endPoint.x, startPoint.x, endPoint.x}, new int [] {endPoint.y, startPoint.y, endPoint.y}, 3);
+    			 g.setColor(new ColorPanel().get_lineColor()); g.drawPolygon(new int [] {2*startPoint.x-endPoint.x, startPoint.x, endPoint.x}, new int [] {endPoint.y, startPoint.y, endPoint.y}, 3);
+    			 break;
+    	case 14: g.fillPolygon(new int [] {2*startPoint.x-endPoint.x, startPoint.x, endPoint.x, startPoint.x}, new int [] {endPoint.y, startPoint.y, endPoint.y, 2*endPoint.y-startPoint.y}, 4);
+		 		 g.setColor(new ColorPanel().get_lineColor()); g.drawPolygon(new int [] {2*startPoint.x-endPoint.x, startPoint.x, endPoint.x, startPoint.x}, new int [] {endPoint.y, startPoint.y, endPoint.y, 2*endPoint.y-startPoint.y}, 4);			 
+    			 break;    
+    	case 15: 				 
+				 t = Math.sqrt(Math.pow(endPoint.x-startPoint.x, 2)+Math.pow(endPoint.y-startPoint.y, 2));
+				 r = (int) ( ( (Math.sqrt(5)*( Math.sqrt(5+2*Math.sqrt(5)) ))/10) *t );	 
+				 R = (int) (Math.sqrt(5)-1)*r;
+
+				 if(endPoint.y>startPoint.y) { 
+					 g.fillPolygon(new int [] {2*startPoint.x-endPoint.x, startPoint.x, endPoint.x, (int) ((startPoint.x+endPoint.x)/2), (int) ((startPoint.x+2*startPoint.x-endPoint.x)/2)}, new int [] {endPoint.y, startPoint.y, endPoint.y, (int) (startPoint.y+r+R), (int) (startPoint.y+r+R)}, 5);
+					 g.setColor(new ColorPanel().get_lineColor()); g.drawPolygon(new int [] {2*startPoint.x-endPoint.x, startPoint.x, endPoint.x, (int) ((startPoint.x+endPoint.x)/2), (int) ((startPoint.x+2*startPoint.x-endPoint.x)/2)}, new int [] {endPoint.y, startPoint.y, endPoint.y, (int) (startPoint.y+r+R), (int) (startPoint.y+r+R)}, 5);
+				 }
+				 else {
+					 g.fillPolygon(new int [] {2*startPoint.x-endPoint.x, startPoint.x, endPoint.x, (int) ((startPoint.x+endPoint.x)/2), (int) ((startPoint.x+2*startPoint.x-endPoint.x)/2)}, new int [] {endPoint.y, startPoint.y, endPoint.y, (int) (startPoint.y-r-R), (int) (startPoint.y-r-R)}, 5);
+					 g.setColor(new ColorPanel().get_lineColor()); g.drawPolygon(new int [] {2*startPoint.x-endPoint.x, startPoint.x, endPoint.x, (int) ((startPoint.x+endPoint.x)/2), (int) ((startPoint.x+2*startPoint.x-endPoint.x)/2)}, new int [] {endPoint.y, startPoint.y, endPoint.y, (int) (startPoint.y-r-R), (int) (startPoint.y-r-R)}, 5);
+				 }
+				 break;
+    	}
+    }
+    
+    /* Очистка всех массивов и создание пустого холста */    
+    static void clearArea(){
+    	FigureOrder.clear();
+        ModeOrder.clear();
+        ColorOrder.clear();
+        WidthOrder.clear();
+        ObjOutlineOrder.clear(); 
+        ColorFillOrder.clear();
+        ShapeOrder.clear(); 
+        i=0;
+    }
+    
+   
+    // Делаем изображение из панели рисование
+    public static BufferedImage getImg (){  	
+		img = new BufferedImage(jp.getWidth(), jp.getHeight(), BufferedImage.TYPE_INT_RGB);
+		jp.paint(img.getGraphics());
+    	return img;
+    }
+    
+    public static void removeTextField(){
+    	jp.remove(tf);InvTextField=0;
+    	jp.revalidate();
+    	jp.repaint();
+    	tf=null;
+    	
+    }
+}
+
+
+

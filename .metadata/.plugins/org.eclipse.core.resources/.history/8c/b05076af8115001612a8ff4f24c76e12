@@ -1,0 +1,5 @@
+package win_model;
+
+public class ServerData {
+	public static int GotAClient=0;
+}

@@ -1,0 +1,138 @@
+package win_logic;
+
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import win_style.*;
+
+public class ToolsLogic extends MainMenuElements {
+	public static int drawMode=2, objColor;
+	public static float lineWidth=1;
+	
+	public int get_drawMode(){  
+	  return drawMode;
+} 
+	public float get_lineWidth(){  
+		  return lineWidth;
+} 
+	
+/* нопка меню Tools - скрыть панель инструментов и открыть*/	  
+	  public boolean ToolsBtn(){
+		  jMenuBtn[0].addActionListener(new ActionListener() {
+		        public void actionPerformed(ActionEvent e) {
+		            if(panelCommonFlag==true) { panelCommon.setVisible(false); panelCommonFlag=false; }
+		            else { panelCommon.setVisible(true); panelCommonFlag=true; }
+		        }
+		    });
+		  
+		  return panelCommonFlag;
+	  } 
+	  
+/*  нопка выбора режима рисовани€: карандаш, кисть, ластик, толщина линии */
+	  public void ModeBtn(){
+		  Btn[2].addActionListener(new ActionListener() { //выбрать карандаш
+		        public void actionPerformed(ActionEvent e) {
+		        	drawMode=0;
+		        }
+		    });
+		  Btn[3].addActionListener(new ActionListener() { //выбрать кисть
+		        public void actionPerformed(ActionEvent e) {
+		        	drawMode=1;
+		        }
+		    });
+		  Btn[4].addActionListener(new ActionListener() { //выбрать ластик
+		        public void actionPerformed(ActionEvent e) {
+		        	drawMode=2;
+		        }
+		    });
+		  Btn[5].addActionListener(new ActionListener() { //выбрать текст
+		        public void actionPerformed(ActionEvent e) {
+		        	drawMode=3;
+		        }
+		    });
+		  Btn[Btn.length-3].addActionListener(new ActionListener() { //выбрать толщину линии
+		        public void actionPerformed(ActionEvent e) {
+			       	JSlider slider = new JSlider(JSlider.HORIZONTAL, 1, 10, 1);
+			       	slider.setMajorTickSpacing(1);
+				    slider.setPaintTicks(true);
+				    slider.setPaintLabels(true);
+				    slider.setSnapToTicks(true);
+				    slider.setValue((int)lineWidth);
+				    
+			        JPanel sliderPanel = new JPanel();
+			        sliderPanel.add(slider);
+			        	        
+			        int result = JOptionPane.showConfirmDialog(null, sliderPanel, 
+			                 "Choose the line width", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+			        
+			        float lineWidthBuffer = lineWidth;
+			        lineWidth=slider.getValue();
+			        
+			        if (result == JOptionPane.OK_OPTION) {
+			        	lineWidth=slider.getValue();
+			         }
+			        
+			        if (result == JOptionPane.CANCEL_OPTION) {
+			        	lineWidth=lineWidthBuffer;
+			         }
+			        }
+			        });
+		  Btn[Btn.length-2].addActionListener(new ActionListener() { //выбрать толщину линии
+		        public void actionPerformed(ActionEvent e) {
+		        	objColor=1;
+			        }
+			        });
+		  Btn[Btn.length-1].addActionListener(new ActionListener() { //выбрать толщину линии
+		        public void actionPerformed(ActionEvent e) {
+		        	objColor=2;
+			        }
+			        });
+	  } 	  
+	  
+	  public void ModeinBtn(){
+		  inBtn[0].addActionListener(new ActionListener() { //выбрать линию
+		        public void actionPerformed(ActionEvent e) {
+		        	drawMode=10; 
+		        }
+		    });
+		  inBtn[1].addActionListener(new ActionListener() { //выбрать окружность
+		        public void actionPerformed(ActionEvent e) {
+		        	drawMode=11; 
+		        }
+		    });
+		  inBtn[2].addActionListener(new ActionListener() { //выбрать квадрат
+		        public void actionPerformed(ActionEvent e) {
+		        	drawMode=12; 
+		        }
+		    });
+		  inBtn[3].addActionListener(new ActionListener() { //выбрать треугольник
+		        public void actionPerformed(ActionEvent e) {
+		        	drawMode=13; 
+		        }
+		    });
+		  inBtn[4].addActionListener(new ActionListener() { //выбрать ромб
+		        public void actionPerformed(ActionEvent e) {
+		        	drawMode=14; 
+		        }
+		    });
+		  inBtn[5].addActionListener(new ActionListener() { //выбрать п€тиугольник
+		        public void actionPerformed(ActionEvent e) {
+		        	drawMode=15; 
+		        }
+		    });
+	  }
+	  
+	  public void ToolsActivation(){
+		  ToolsBtn(); ModeBtn(); ModeinBtn();
+	  }
+}

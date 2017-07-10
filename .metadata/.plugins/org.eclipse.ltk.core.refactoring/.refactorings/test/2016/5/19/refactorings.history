@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename compilation unit &apos;DrawLine.java&apos; to &apos;JMenuItemSetAcceleratorTest.java&apos;&#x0D;&#x0A;- Original project: &apos;test&apos;&#x0D;&#x0A;- Original element: &apos;DrawLine.java&apos;&#x0D;&#x0A;- Renamed element: &apos;JMenuItemSetAcceleratorTest.java&apos;" description="Rename compilation unit &apos;DrawLine.java&apos;" flags="2" id="org.eclipse.jdt.ui.rename.compilationunit" input="/src&lt;{DrawLine.java" name="JMenuItemSetAcceleratorTest.java" references="false" stamp="1462112475160" version="1.0"/>
+</session>

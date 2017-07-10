@@ -1,0 +1,6 @@
+package win_model;
+
+public class ServerData {
+	public static String SocketIP=""; 
+	public static int SocketPort=0; 
+}

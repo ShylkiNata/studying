@@ -1,0 +1,14 @@
+#Fat Jar Configuration File
+#Mon May 09 03:18:39 EEST 2016
+onejar.license.required=true
+manifest.classpath=
+manifest.removesigners=true
+onejar.checkbox=false
+jarname=diploma1.jar
+manifest.mergeall=true
+manifest.mainclass=win_style.WindowGUI
+manifest.file=<createnew>
+jarname.isextern=false
+onejar.expand=
+excludes=
+includes=

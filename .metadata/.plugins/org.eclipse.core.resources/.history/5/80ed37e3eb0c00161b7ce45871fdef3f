@@ -1,0 +1,229 @@
+package win_logic;
+
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Robot;
+import java.awt.Shape;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Path2D;
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JPanel;
+
+public class DrawPanel extends JPanel{
+
+    private Point startPoint, endPoint;
+    private Shape shape;
+    private Path2D path;
+    double t; int r,R;
+    
+    private List<Point[]> FigureOrder;
+    
+    private ArrayList <Integer> ModeOrder = new ArrayList <Integer>();
+    private ArrayList <Color> ColorOrder = new ArrayList <Color>();
+    private ArrayList <Float> WidthOrder = new ArrayList <Float>();
+     
+    private ArrayList <Shape> ShapeOrder = new ArrayList <Shape>();    
+
+    int i=0, shape_i=0;
+    
+    public DrawPanel() {
+        setBackground(Color.white);
+        
+        FigureOrder = new ArrayList<>(25);
+        
+        MouseAdapter ma = new MouseAdapter() {
+        	
+            @Override
+            public void mouseClicked(MouseEvent e) {
+            	if(new ToolsLogic().get_objColor()==1) { //picker
+            		try{
+            		Robot robot = new Robot();
+            			Color color = robot.getPixelColor(e.getPoint().x, e.getPoint().y);
+
+            			new ColorPanel().set_lineColor(color);
+            			
+            			new ToolsLogic().set_objColor(0); 
+            	
+            		}
+            		catch(Exception e1){}
+            		System.out.println("hj");
+            	}
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                startPoint = e.getPoint();
+                if(new ToolsLogic().get_drawMode()<3){
+                	path = new Path2D.Double();
+                    shape = path;
+                }
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                endPoint = e.getPoint();
+                
+                if( new ToolsLogic().get_drawMode()<3 ){
+                    path.moveTo(startPoint.x, startPoint.y);
+                    path.lineTo(endPoint.x, endPoint.y);
+                    shape = path;
+                    ShapeOrder.add(shape);
+                }
+                
+                Point[] points = new Point[]{startPoint, endPoint};
+                FigureOrder.add(points); 
+                
+	            startPoint = null;
+	            endPoint = null;
+                
+                ModeOrder.add(new ToolsLogic().get_drawMode());
+                WidthOrder.add(new ToolsLogic().get_lineWidth());
+                ColorOrder.add(new ColorPanel().get_lineColor());
+                
+                repaint();
+            }
+
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                endPoint = e.getPoint();  
+                if(new ToolsLogic().get_drawMode()<3){
+                    path.moveTo(startPoint.x, startPoint.y);
+                    path.lineTo(endPoint.x, endPoint.y);
+                    shape = path;
+                    startPoint = endPoint;
+                }
+                repaint();
+            }
+
+        };
+
+        addMouseListener(ma);
+        addMouseMotionListener(ma);
+    }
+
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D) g.create();
+        i=0; shape_i=0;
+        for (Point[] p : FigureOrder) {
+        	
+        	g2.setColor(ColorOrder.get(i));
+        	g2.setStroke(new BasicStroke(WidthOrder.get(i)));
+        	g.setColor(ColorOrder.get(i));
+			((Graphics2D) g).setStroke(new BasicStroke(WidthOrder.get(i)));
+        	
+        	switch(ModeOrder.get(i)){
+        	case  0: g2.setStroke(new BasicStroke(1));
+        			 g2.draw(ShapeOrder.get(shape_i));
+            		 shape_i++;
+        			 break;
+        	case  1: g2.draw(ShapeOrder.get(shape_i));
+					 shape_i++;
+					 break;
+        	case  2: g2.setColor(Color.white);
+        			 g2.draw(ShapeOrder.get(shape_i));
+					 shape_i++;
+					 break;
+        	case 10: g2.drawLine(p[0].x, p[0].y, p[1].x, p[1].y);
+        		     break;     	
+	    	case 11: if((p[0].x<p[1].x) && (p[0].y<p[1].y))
+					 	g2.drawOval(p[0].x, p[0].y, p[1].x-p[0].x, p[1].y-p[0].y);
+				     if((p[0].x>p[1].x) && (p[0].y>p[1].y))
+						g2.drawOval(p[1].x, p[1].y, p[0].x-p[1].x, p[0].y-p[1].y);
+				     if(p[0].x>p[1].x)
+		    			g2.drawOval(p[1].x, p[0].y, p[0].x-p[1].x, p[1].y-p[0].y);
+					 if(p[0].y>p[1].y)
+						g2.drawOval(p[0].x, p[1].y, p[1].x-p[0].x, p[0].y-p[1].y);
+				     break; 
+	    	case 12: if((p[0].x<p[1].x) && (p[0].y<p[1].y))
+	    			 	g2.drawRect(p[0].x, p[0].y, p[1].x-p[0].x, p[1].y-p[0].y);
+				     if((p[0].x>p[1].x) && (p[0].y>p[1].y))
+						g2.drawRect(p[1].x, p[1].y, p[0].x-p[1].x, p[0].y-p[1].y);
+				     if(p[0].x>p[1].x)
+		    			g2.drawRect(p[1].x, p[0].y, p[0].x-p[1].x, p[1].y-p[0].y);
+					 if(p[0].y>p[1].y)
+						g2.drawRect(p[0].x, p[1].y, p[1].x-p[0].x, p[0].y-p[1].y);
+	 		 		 break; 
+        	case 13: g.drawPolygon(new int [] {2*p[0].x-p[1].x, p[0].x, p[1].x}, new int [] {p[1].y, p[0].y, p[1].y}, 3);
+		     		 break;
+        	case 14: g.drawPolygon(new int [] {2*p[0].x-p[1].x, p[0].x, p[1].x, p[0].x}, new int [] {p[1].y, p[0].y, p[1].y, 2*p[1].y-p[0].y}, 4);
+					 break;        		
+		   	case 15: 			 
+					 t = Math.sqrt(Math.pow(p[1].x-p[0].x, 2)+Math.pow(p[1].y-p[0].y, 2));
+					 r = (int) ( ( (Math.sqrt(5)*( Math.sqrt(5+2*Math.sqrt(5)) ))/10) *t );	 
+					 R = (int) (Math.sqrt(5)-1)*r;
+					 
+					 if(p[1].y>p[0].y) ((Graphics2D) g).drawPolygon(new int [] {2*p[0].x-p[1].x, p[0].x, p[1].x, (int) ((p[0].x+p[1].x)/2), (int) ((p[0].x+2*p[0].x-p[1].x)/2)}, new int [] {p[1].y, p[0].y, p[1].y, (int) (p[0].y+r+R), (int) (p[0].y+r+R)}, 5);
+					 else ((Graphics2D) g).drawPolygon(new int [] {2*p[0].x-p[1].x, p[0].x, p[1].x, (int) ((p[0].x+p[1].x)/2), (int) ((p[0].x+2*p[0].x-p[1].x)/2)}, new int [] {p[1].y, p[0].y, p[1].y, (int) (p[0].y-r-R), (int) (p[0].y-r-R)}, 5);
+					 break;        		
+		    		 
+        	}
+        	i++;
+        }
+        
+        if (startPoint != null && endPoint != null) {
+            g2.setColor(new ColorPanel().get_lineColor());
+            g2.setStroke(new BasicStroke(new ToolsLogic().get_lineWidth()));
+            g.setColor(new ColorPanel().get_lineColor());
+			((Graphics2D) g).setStroke(new BasicStroke(new ToolsLogic().get_lineWidth()));
+            
+           	switch(new ToolsLogic().get_drawMode()){
+        	case  0: g2.setStroke(new BasicStroke(1));
+        			 g2.draw(shape);
+					 break;
+        	case  1: g2.draw(shape);
+					 break;
+        	case  2: g2.setColor(Color.white);
+        			 g2.draw(shape);
+					 break;
+        	case 10: g2.drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y);
+        		     break;    
+	    	case 11: if((endPoint.x>startPoint.x) && (endPoint.y>startPoint.y))
+						g2.drawOval(startPoint.x, startPoint.y, endPoint.x-startPoint.x, endPoint.y-startPoint.y);
+					 if((endPoint.x<startPoint.x) && (endPoint.y<startPoint.y))
+						g2.drawOval(endPoint.x, endPoint.y, startPoint.x-endPoint.x, startPoint.y-endPoint.y);	
+				     if(endPoint.x<startPoint.x) 
+				    	g2.drawOval(endPoint.x, startPoint.y, startPoint.x-endPoint.x, endPoint.y-startPoint.y);
+					 if(endPoint.y<startPoint.y) 
+						g2.drawOval(startPoint.x, endPoint.y, endPoint.x-startPoint.x, startPoint.y-endPoint.y);
+					 break;
+	    	case 12: if((endPoint.x>startPoint.x) && (endPoint.y>startPoint.y))
+	    				g2.drawRect(startPoint.x, startPoint.y, endPoint.x-startPoint.x, endPoint.y-startPoint.y);
+					 if((endPoint.x<startPoint.x) && (endPoint.y<startPoint.y))
+						g2.drawRect(endPoint.x, endPoint.y, startPoint.x-endPoint.x, startPoint.y-endPoint.y);	
+	    		     if(endPoint.x<startPoint.x) 
+	    		    	g2.drawRect(endPoint.x, startPoint.y, startPoint.x-endPoint.x, endPoint.y-startPoint.y);
+	    			 if(endPoint.y<startPoint.y) 
+	    				g2.drawRect(startPoint.x, endPoint.y, endPoint.x-startPoint.x, startPoint.y-endPoint.y);    			 
+	 		 		 break; 
+        	case 13: g.drawPolygon(new int [] {2*startPoint.x-endPoint.x, startPoint.x, endPoint.x}, new int [] {endPoint.y, startPoint.y, endPoint.y}, 3);
+    		 		 break;
+        	case 14: g.drawPolygon(new int [] {2*startPoint.x-endPoint.x, startPoint.x, endPoint.x, startPoint.x}, new int [] {endPoint.y, startPoint.y, endPoint.y, 2*endPoint.y-startPoint.y}, 4);
+					 break;    
+        	case 15: 				 
+					 t = Math.sqrt(Math.pow(endPoint.x-startPoint.x, 2)+Math.pow(endPoint.y-startPoint.y, 2));
+					 r = (int) ( ( (Math.sqrt(5)*( Math.sqrt(5+2*Math.sqrt(5)) ))/10) *t );	 
+					 R = (int) (Math.sqrt(5)-1)*r;
+	
+					 if(endPoint.y>startPoint.y) g.drawPolygon(new int [] {2*startPoint.x-endPoint.x, startPoint.x, endPoint.x, (int) ((startPoint.x+endPoint.x)/2), (int) ((startPoint.x+2*startPoint.x-endPoint.x)/2)}, new int [] {endPoint.y, startPoint.y, endPoint.y, (int) (startPoint.y+r+R), (int) (startPoint.y+r+R)}, 5);
+					 else g.drawPolygon(new int [] {2*startPoint.x-endPoint.x, startPoint.x, endPoint.x, (int) ((startPoint.x+endPoint.x)/2), (int) ((startPoint.x+2*startPoint.x-endPoint.x)/2)}, new int [] {endPoint.y, startPoint.y, endPoint.y, (int) (startPoint.y-r-R), (int) (startPoint.y-r-R)}, 5);
+					 break;
+        	}   	
+        }
+        g2.dispose();
+    }
+
+}
+
+
+

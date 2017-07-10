@@ -1,0 +1,50 @@
+package win_logic;
+
+	import java.net.*;
+import java.io.*;
+
+import win_model.ServerData;
+	public class ServerLogic implements Runnable {
+	int port;
+	
+    static ObjectOutputStream outS;
+    static ObjectInputStream inS;
+		
+	public ServerLogic(int port){
+       this.port=port;
+	}
+	
+	@Override
+	public void run() {
+		// случайный порт (может быть любое число от 1025 до 65535)
+	     
+	       try {
+	         @SuppressWarnings("resource")
+			ServerSocket ss = new ServerSocket(port); // создаем сокет сервера и привязываем его к вышеуказанному порту
+	         System.out.println("Waiting for a client...");
+
+	         Socket socket = ss.accept(); // заставляем сервер ждать подключений и выводим сообщение когда кто-то связался с сервером
+	         System.out.println("Got a client :) ... Finally, someone saw me through all the cover!");
+
+	         ServerData.GotAServerFLAG=1;
+
+	 // Берем входной и выходной потоки сокета, теперь можем получать и отсылать данные клиенту. 
+	         outS = new ObjectOutputStream(socket.getOutputStream());
+	         inS = new ObjectInputStream(socket.getInputStream());
+
+		         outS.writeObject(DrawPanel.ModeOrder); outS.flush(); 
+		         outS.writeObject(DrawPanel.FigureOrder); outS.flush();
+		         outS.writeObject(DrawPanel.ColorOrder); outS.flush();
+		         outS.writeObject(DrawPanel.WidthOrder); outS.flush();
+		         outS.writeObject(DrawPanel.ColorFillOrder); outS.flush();
+		         outS.writeObject(DrawPanel.ShapeOrder); outS.flush();
+		         outS.writeObject(DrawPanel.StringOrder); outS.flush();
+		         outS.writeObject(DrawPanel.FontOrder); outS.flush();
+		         
+		      while(true){
+		        	 getDataFromClient();
+		      }
+		         
+	      } catch(Exception x) { x.printStackTrace(); } 
+	}
+}

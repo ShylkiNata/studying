@@ -1,0 +1,192 @@
+package win_logic;
+
+import java.awt.AWTException;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.Rectangle;
+import java.awt.Robot;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+
+import javax.imageio.ImageIO;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+import win_style.*;
+
+public class MainMenuLogic extends MainMenuElements {
+
+	public static int eraseFlag=0, createFileChooserFlag=0;
+	File file, selectedFile; BufferedWriter writer = null;
+	
+/* кнопка для File -> New. Очистить холст */
+	  public void fileMenu(){
+		   jMenuItem[0].addActionListener(new ActionListener() {           
+	           public void actionPerformed(ActionEvent e) {
+	        	   eraseFlag=1;
+	           }           
+	       });
+		   jMenuItem[2].addActionListener(new ActionListener() {           
+	           public void actionPerformed(ActionEvent e) {
+	        	   try {
+					fileChooser();
+				} catch (FileNotFoundException e1) {
+					e1.printStackTrace();
+				}
+	           }           
+	       });		   
+		   
+			jMenuItem[jMenuItem.length-3].addActionListener(new ActionListener() {           
+			       public void actionPerformed(ActionEvent e) {
+	            		Rectangle screenRect = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
+	            		BufferedImage img;
+	            		File outputfile = new File("image.jpg");
+						try { img = new Robot().createScreenCapture(screenRect); 
+							  ImageIO.write(img, "jpg", outputfile);
+						} 
+						catch (AWTException | IOException e1) { e1.printStackTrace(); }
+			       }           
+			    });
+			
+			jMenuItem[jMenuItem.length-1].addActionListener(new ActionListener() {           
+		       public void actionPerformed(ActionEvent e) {
+		           System.exit(0); }           
+		    });
+	  }
+	
+/*Кнопка подключения к серверу*/	  
+	  public void ConnectBtn(){
+		  Btn[0].addActionListener(new ActionListener() {
+		        public void actionPerformed(ActionEvent e) {
+		            //JOptionPane.showInputDialog("Server address", "");
+		            //JOptionPane.showMessageDialog(null,JOptionPane.showInputDialog(null,"Please enter a message"));
+		            JTextField xField = new JTextField(10);
+		            JTextField yField = new JTextField(10);
+		            
+		            xField.setPreferredSize(new Dimension(8,8));
+		            yField.setPreferredSize(new Dimension(8,8));
+		            
+		            JPanel myPanel = new JPanel();
+		            GridLayout al = new GridLayout(2,2);
+		             
+		            myPanel.setLayout(al);
+		            
+		            myPanel.add(new JLabel("Put the server IP address:"));
+		            myPanel.add(xField);
+		            	            
+		            myPanel.add(new JLabel("Put the port of the socket:"));		            	            
+		            myPanel.add(yField);
+		            
+		            int result = JOptionPane.showConfirmDialog(null, myPanel, 
+		                     "Connect to the server", JOptionPane.OK_CANCEL_OPTION);
+		            if (result == JOptionPane.OK_OPTION) {
+		               System.out.println("x value: " + xField.getText());
+		               System.out.println("y value: " + yField.getText());
+		            }}
+		    });
+	  }
+	  
+	  public void MenuActivation(){
+		  fileMenu(); fileMenu();  
+		  ConnectBtn();
+	  }
+	  
+	  void fileChooser() throws FileNotFoundException{
+		  createFileChooserFlag++;
+		  if(MainMenuLogic.createFileChooserFlag==2) {
+    	   String userDir = System.getProperty("user.home");
+    	   JFileChooser fileChooser = new JFileChooser(userDir +"/Desktop");
+    	   
+    	   fileChooser.setDialogTitle("Save Image as");
+    	   
+    	   String [] filterArray={"jpg", "png", "gif", "jpeg", "jade"}; FileFilter filter;
+    	   for(int i=0; i<filterArray.length; i++) {
+	        	   filter = new FileNameExtensionFilter(filterArray[i], filterArray[i]);
+	        	   fileChooser.setFileFilter(filter);
+	        	   fileChooser.addChoosableFileFilter(filter);
+    	   }
+
+    	   
+    	   if (fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+        	   selectedFile = fileChooser.getSelectedFile();
+
+    		    if(selectedFile.getName().lastIndexOf(".")==-1) { // если не указано расширение пользователем
+		    	
+		    	   if(fileChooser.getFileFilter().getDescription().equals("All Files") || fileChooser.getFileFilter().getDescription().equals("jade")) 			    	 
+				    	try( PrintWriter out = new PrintWriter( selectedFile.getParent()+selectedFile.getName()+".jade") ){ // если выбраны все файлы
+				    		 //out.println(array);
+				    		 out.close();
+				    	WindowGUI.fileName = fileChooser.getName()+".jade";
+				    	}
+		    	   else { 
+		    		 file = new File(selectedFile.getParent()+selectedFile.getName());
+		    		 switch(fileChooser.getFileFilter().getDescription()){
+				   		case "png":  try { ImageIO.write(DrawPanel.getImg(), "png", file); } 
+						 			 catch (IOException e) { e.printStackTrace(); }
+							break;
+						case "gif":  try { ImageIO.write(DrawPanel.getImg(), "gif", file); } 
+									 catch (IOException e) { e.printStackTrace(); }
+							break;
+						case "jpg":  try { ImageIO.write(DrawPanel.getImg(), "jpg", file); } 
+							  		 catch (IOException e) { e.printStackTrace(); }
+							break;
+						case "jpeg": try { ImageIO.write(DrawPanel.getImg(), "jpeg", file); }
+							  		 catch (IOException e) { e.printStackTrace(); }
+							break;
+						case "jade": 
+				                ModeOrder.add(new ToolsLogic().get_drawMode());
+				                WidthOrder.add(new ToolsLogic().get_lineWidth());
+				                ColorOrder.add(ColorPanel.lineColor);
+				                ObjOutlineOrder.add(new ToolsLogic().get_objOutline()); // закрашено 2/не закрашено 1
+				                ColorFillOrder.add(new ColorPanel().get_fillColor()); // цвета закрашенного							
+							break;
+		    	   		}
+		    	       WindowGUI.fileName = fileChooser.getName()+fileChooser.getFileFilter().getDescription();
+		    	   }
+    		    }
+    		    	
+    		    else { // если расширение пользователем указано
+    		    	file = new File(selectedFile.getAbsolutePath());
+    		    	switch((selectedFile.getName().substring(selectedFile.getName().lastIndexOf(".")+1,selectedFile.getName().length())).toLowerCase()){
+    		    		case "png":  try { ImageIO.write(DrawPanel.getImg(), "png", file); } 
+   					 				 catch (IOException e) { e.printStackTrace(); }
+    		    			break;
+    		    		case "gif":  try { ImageIO.write(DrawPanel.getImg(), "gif", file); } 
+    		    					 catch (IOException e) { e.printStackTrace(); }
+    		    			break;
+    		    		case "jpg":  try { ImageIO.write(DrawPanel.getImg(), "jpg", file); } 
+			 				  		 catch (IOException e) { e.printStackTrace(); }
+    		    			break;
+    		    		case "jpeg": try { ImageIO.write(DrawPanel.getImg(), "jpeg", file); }
+			 				  		 catch (IOException e) { e.printStackTrace(); }
+    		    			break;
+    		    		case "jade": 
+    		    			break;
+    		    	}
+    		    	WindowGUI.fileName = selectedFile.getName();
+    		    }
+    		    
+    	   }	    		    
+		    createFileChooserFlag=0;
+		    
+		    WindowGUI.frame.setTitle(WindowGUI.frameName+" | "+WindowGUI.fileName);
+		 }
+	}
+
+}

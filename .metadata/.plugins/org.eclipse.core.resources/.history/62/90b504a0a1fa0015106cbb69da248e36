@@ -1,0 +1,169 @@
+package win_style;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JColorChooser;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+
+import win_logic.*;
+
+public class MainMenuElements {
+	String imgPath="/project/diploma/img/";
+	public static String [] img={"connect.png","about.png","pencil.png","brush.png","eraser.png","letter.png","diameter.png","picker.png"};
+	public static String [] fgr={"f_line.png","f_circle.png","f_rectangle.png","f_triangle.png","f_rhombus.png","f_pentagon.png"};
+	   
+	public static String [] MenuFileItem = {"New", "Open", "Save", "Save As", "Exit"};
+	public static String [] jMenuBtnName = {"Tools","Image"};
+	public static String [] jMenuName = {"File","Theme"};
+	   
+	public static JPanel panelCommon;
+	public static JMenu [] jMenu = new JMenu[jMenuName.length];
+	public static JMenuItem [] jMenuItem = new JMenuItem [MenuFileItem.length];
+	public static JButton [] jMenuBtn = new JButton[jMenuBtnName.length];
+	   
+	public static JButton [] Btn = new JButton[img.length];
+	public static JButton [] inBtn = new JButton[fgr.length];
+	
+	public static Image image, nimage;
+	public static ImageIcon themeBtnImg;
+	
+	public static int i, j, x=0, y=0, inPanAmount=3;
+	public static boolean panelCommonFlag;
+	
+/* Создаём панель меню с основными пунктами */
+   public JMenuBar createMenu(){
+       JMenuBar menuBar = new JMenuBar();  
+       
+       for(i=0; i<jMenuName.length; i++){
+    	   jMenu[i]=new JMenu(jMenuName[i]);
+    	   menuBar.add(jMenu[i]); 
+       }
+       
+       menuBar.add(Box.createHorizontalGlue());
+       
+       for(i=0; i<jMenuBtnName.length; i++){
+    	   jMenuBtn[i]=new JButton(jMenuBtnName[i]);
+    	   menuBar.add(jMenuBtn[i]); 
+       }
+       								 
+       menuBar.add(Box.createHorizontalGlue());      
+
+       for(i=0; i<2; i++) {
+				           themeBtnImg = new ImageIcon(imgPath+img[i]);
+				           image = themeBtnImg.getImage();  
+				           nimage = image.getScaledInstance(15, 15, java.awt.Image.SCALE_SMOOTH);  
+				           themeBtnImg = new ImageIcon(nimage);
+				           Btn[i]=new JButton(themeBtnImg);
+				           Btn[i].setPreferredSize(new Dimension(30,15));
+				    	   menuBar.add(Btn[i]); 
+       }
+       
+	   CreateMenuItems();
+	   
+       return menuBar;
+   }
+
+/* Создаём подпункты File */
+   public void CreateMenuItems(){
+	   for(i=0; i<MenuFileItem.length; i++){ 
+		   									jMenuItem[i] = new JMenuItem(MenuFileItem[i]);  
+	   										jMenu[0].add(jMenuItem[i]); 
+	   										if((i+1)%2==0) jMenu[0].addSeparator();
+	   										}
+   }
+ 
+/* Создаём панель инструментов */   
+   public JPanel CreateToolPanel(){
+	   
+	   panelCommon = new JPanel();
+	   panelCommon.setPreferredSize(new Dimension(100, 40));
+	   panelCommon.setBackground(new Color(51,51,51));
+ 	   panelCommon.setLayout(new GridLayout(4,1));
+ 	   
+ 	   JPanel [] panelInner = new JPanel[inPanAmount];  // Создаём 4 внутренних панели
+	   panelInner[0]=new JPanel(new GridLayout(3,2));
+	   panelInner[1]=new JPanel(new GridLayout(5,2));
+	   panelInner[2]=new JPanel(new GridLayout(1,2));	   
+	   
+	   //Создание панелей в панеле Tools
+ 	   for(i=0; i<inPanAmount; i++){		                  
+ 		   				  panelInner[i].setBackground(new Color(51,51,51));
+ 		   				  if(i==0 || i==inPanAmount-1){
+	 		   			 	   //panelInner[i].setPreferredSize(new Dimension(100, 40));
+	 		   			 	   panelInner[i].setBackground(new Color(38, 38, 38));
+ 		   				  }
+ 	   }
+ 	   
+	   //Заполнение кнопками рисования первой (левой) панели в Tools 	   
+       for(i=2; i<Btn.length-2; i++) {
+           themeBtnImg = new ImageIcon(imgPath+img[i]);
+           image = themeBtnImg.getImage();  
+           nimage = image.getScaledInstance(25, 25, java.awt.Image.SCALE_SMOOTH);  
+           themeBtnImg = new ImageIcon(nimage);
+           Btn[i]=new JButton(themeBtnImg);
+           Btn[i].setPreferredSize(new Dimension(30,30));
+           panelInner[0].add(Btn[i]);   	   
+       }
+              
+	   //Заполнение кнопками рисования второй (центральной) панели в Tools 	      
+	   for(i=0; i<inBtn.length; i++) {
+	       themeBtnImg = new ImageIcon(imgPath+fgr[i]);
+	       image = themeBtnImg.getImage();  
+	       nimage = image.getScaledInstance(25, 25, java.awt.Image.SCALE_SMOOTH);  
+	       themeBtnImg = new ImageIcon(nimage);
+	       inBtn[i]=new JButton(themeBtnImg);
+	       inBtn[i].setPreferredSize(new Dimension(30,30));             
+	       panelInner[1].add(inBtn[i]);   	   	
+	   }      
+	   
+	     for(i=Btn.length-2; i<Btn.length; i++) {
+		       themeBtnImg = new ImageIcon(imgPath+img[i]);
+		       image = themeBtnImg.getImage();  
+		       nimage = image.getScaledInstance(25, 25, java.awt.Image.SCALE_SMOOTH);  
+		       themeBtnImg = new ImageIcon(nimage);
+		       Btn[i]=new JButton(themeBtnImg);
+		       Btn[i].setPreferredSize(new Dimension(30,30));             
+		       panelInner[2].add(Btn[i]);   	   	
+	     }
+	     
+	     for(i=0; i<inPanAmount; i++) panelCommon.add(panelInner[i]);
+	    	 
+
+         ActionListener actionListener = new ActionListener() {
+           public void actionPerformed(ActionEvent actionEvent) {
+             Color initialBackground = Btn[Btn.length-1].getBackground();
+             Color background = JColorChooser.showDialog(null, "JColorChooser", initialBackground);
+            // if (background != null) {
+            //   Btn[5].setBackground(background);
+             //}
+           }
+         };
+         Btn[Btn.length-1].addActionListener(actionListener);
+         /*
+		 jMenuItem[jMenuItem.length-1].addActionListener(new ActionListener() {           
+	           public void actionPerformed(ActionEvent e) {
+	               System.exit(0); }           
+	       		});
+         */
+         new MainMenuLogic().MenuActivation();
+         new ToolsLogic().ToolsActivation();
+         
+        panelCommonFlag=true;
+        return panelCommon;
+   }
+  
+}
